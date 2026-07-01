@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 
+
 export async function POST(request: NextRequest) {
     let body: Record<string, unknown>;
 
@@ -50,7 +51,11 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    const url = new URL("/success", request.url);
-    url.searchParams.set("title", form.title);
-    return Response.redirect(url.toString(), 303);
+    const host = request.headers.get("host") ?? "localhost:3000";
+    const proto = request.headers.get("x-forwarded-proto") ?? "http";
+    const redirectUrl = new URL("/success", `${proto}://${host}`);
+    redirectUrl.searchParams.set("title", form.title);
+
+
+    return NextResponse.redirect(redirectUrl.toString(), 303);
 }
