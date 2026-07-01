@@ -1,65 +1,82 @@
+import Header from "@/components/Header";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+
+      <main className="min-h-screen bg-[#faf3dd] flex items-center text-black px-4 py-16 selection:bg-red-200">
+        <div className="max-w-5xl mx-auto flex flex-col gap-5 justify-center items-center text-center">
+
+          {/* Brand/Logo Section */}
+          <div className="flex flex-col items-center gap-2">
+            <div className="logo mb-2">
+              <Image
+                src="/logo.png"
+                alt="Formy Logo"
+                height={50}
+                width={180}
+                priority
+                className="object-contain"
+              />
+            </div>
+            <h1 className="text-4xl md:text-7xl font-black leading-tight uppercase tracking-tight">
+              formy
+              <span className="block mt-2 text-3xl md:text-5xl font-bold normal-case">
+                is launching <span className="bg-[#EA4335] text-white px-3 py-1 font-extrabold lowercase">soon</span>
+              </span>
+            </h1>
+          </div>
+
+          <p className="italic text-gray-600">Until then…</p>
+
+
+          <div className="max-w-2xl space-y-4">
+            <p className="font-medium text-lg text-gray-900">
+              Join the free early access waitlist for formy, the form builder that google forms can never become. We are currently google's wettest dream.
+            </p>
+
+          </div>
+
+
+          <form
+            action="https://api.web3forms.com/submit" method="POST"
+
+            className="mt-4 w-full flex justify-center"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="p-6 md:p-8 flex flex-col gap-3 w-full max-w-xl">
+
+
+              <input type="hidden" name="access_key" value="ce1766fc-e595-4938-942f-ab63c2e4b9a0" />
+
+              <input
+                type="text"
+                name="name"
+                placeholder="Your name"
+                required
+                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-black placeholder-gray-500 outline-none focus:border-black transition-colors"
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Your best email"
+                required
+                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-black placeholder-gray-500 outline-none focus:border-black transition-colors"
+              />
+
+              <button
+                type="submit"
+                className="mt-2 w-full bg-black text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-900 active:scale-[0.99] transition-all"
+              >
+                Join Now
+              </button>
+            </div>
+          </form>
+
+
+
         </div>
       </main>
-    </div>
+    </>
   );
 }
