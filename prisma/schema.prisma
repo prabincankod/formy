@@ -12,6 +12,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum FormType {
+  SCHEMA
+  NOSCHEMA
+}
+
 model User {
   id String @id @default(cuid())
 
@@ -27,9 +32,24 @@ model Form {
   title String
   slug  String? @unique
 
+  type FormType @default(NOSCHEMA)
+
   submissions Submission[]
   createdBy   User         @relation(fields: [createdById], references: [id])
   createdById String
+
+  formSchemas FormSchema[]
+}
+
+model FormSchema {
+  id String @id @default(cuid())
+
+  formId String
+  form   Form   @relation(fields: [formId], references: [id])
+
+  schema Json
+
+  createdAt DateTime @default(now())
 }
 
 model Submission {
