@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 interface FormRow {
     id: string;
     title: string;
-    slug: string | null;
+    slug: string;
     type: string;
     submissions: number;
 }
@@ -69,14 +69,11 @@ export function FormsList({ data }: { data: FormRow[] }) {
                         title: "Slug",
                         dataIndex: "slug",
                         key: "slug",
-                        render: (slug: string | null) =>
-                            slug ? (
-                                <code className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                                    {slug}
-                                </code>
-                            ) : (
-                                <span className="text-gray-400">—</span>
-                            ),
+                        render: (slug: string) => (
+                            <code className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                                {slug}
+                            </code>
+                        ),
                     },
                     {
                         title: "Type",

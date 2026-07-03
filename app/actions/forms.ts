@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/app/lib/prisma";
 import { auth } from "@/app/lib/auth";
+import { generateSlug, ensureSlugUnique } from "@/app/lib/slug";
 
 async function getOwnedForm(formId: string) {
     const session = await auth();
@@ -21,9 +22,12 @@ export async function createForm(formData: FormData) {
     const title = formData.get("title") as string;
     if (!title || !title.trim()) throw new Error("Title is required");
 
+    const slug = await generateSlug(title.trim());
+
     const form = await prisma.form.create({
         data: {
             title: title.trim(),
+            slug,
             type: "NOSCHEMA",
             createdById: session.userId,
         },
@@ -36,13 +40,13 @@ export async function updateForm(formId: string, formData: FormData) {
     await getOwnedForm(formId);
 
     const title = formData.get("title") as string;
-    const slug = formData.get("slug") as string;
+    const slug = (formData.get("slug") as string)?.trim();
     const type = formData.get("type");
 
     const data: Record<string, unknown> = {};
     if (title?.trim()) data.title = title.trim();
     if (type === "SCHEMA" || type === "NOSCHEMA") data.type = type;
-    if (slug !== null) data.slug = slug?.trim() || null;
+    if (slug) data.slug = await ensureSlugUnique(slug, formId);
 
     await prisma.form.update({ where: { id: formId }, data });
     redirect(`/dashboard/forms/${formId}`);

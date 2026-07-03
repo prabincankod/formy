@@ -31,7 +31,7 @@ model Form {
   id String @id @default(cuid())
 
   title String
-  slug  String? @unique
+  slug  String @unique
 
   type FormType @default(NOSCHEMA)
 
@@ -63,3 +63,5 @@ model Submission {
 
   createdAt DateTime @default(now())
 }
+
+

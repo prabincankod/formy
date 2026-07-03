@@ -39,7 +39,7 @@ export function FormDetails({
 }: {
     id: string;
     title: string;
-    slug: string | null;
+    slug: string;
     type: string;
     submissionCount: number;
     schema: unknown;
@@ -50,9 +50,7 @@ export function FormDetails({
     const [pending, startTransition] = useTransition();
     const [editForm] = Form.useForm();
 
-    const publicUrl = slug
-        ? `${typeof window !== "undefined" ? window.location.origin : ""}/f/${slug}`
-        : null;
+    const publicUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/f/${slug}`;
 
     const handleEdit = (values: Record<string, string>) => {
         const fd = new FormData();
@@ -82,15 +80,13 @@ export function FormDetails({
                 </div>
 
                 <div className="flex gap-2">
-                    {publicUrl && (
-                        <Button icon={<Eye size={16} />}>
-                            Preview
-                        </Button>
-                    )}
+                    <Button icon={<Eye size={16} />}>
+                        Preview
+                    </Button>
                     <Button
                         icon={<Edit3 size={16} />}
                         onClick={() => {
-                            editForm.setFieldsValue({ title, slug: slug ?? "", type });
+                            editForm.setFieldsValue({ title, slug, type });
                             setEditOpen(true);
                         }}
                     >
@@ -129,13 +125,9 @@ export function FormDetails({
                         </Tag>
                     </Descriptions.Item>
                     <Descriptions.Item label="Slug">
-                        {slug ? (
-                            <code className="rounded bg-gray-100 px-2 py-0.5 text-xs">
-                                {slug}
-                            </code>
-                        ) : (
-                            <span className="text-gray-400">—</span>
-                        )}
+                        <code className="rounded bg-gray-100 px-2 py-0.5 text-xs">
+                            {slug}
+                        </code>
                     </Descriptions.Item>
                     <Descriptions.Item label="Submissions">
                         {submissionCount}
@@ -143,25 +135,23 @@ export function FormDetails({
                 </Descriptions>
             </Card>
 
-            {publicUrl && (
-                <Card title="Public URL" className="!shadow-sm">
-                    <div className="flex items-center gap-2">
-                        <LinkIcon size={16} className="text-gray-400" />
-                        <code className="flex-1 rounded bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                            {publicUrl}
-                        </code>
-                        <Button
-                            type="primary"
-                            size="small"
-                            onClick={() => navigator.clipboard.writeText(publicUrl!)}
-                        >
-                            Copy
-                        </Button>
-                    </div>
-                </Card>
-            )}
+            <Card title="Public URL" className="!shadow-sm">
+                <div className="flex items-center gap-2">
+                    <LinkIcon size={16} className="text-gray-400" />
+                    <code className="flex-1 rounded bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                        {publicUrl}
+                    </code>
+                    <Button
+                        type="primary"
+                        size="small"
+                        onClick={() => navigator.clipboard.writeText(publicUrl)}
+                    >
+                        Copy
+                    </Button>
+                </div>
+            </Card>
 
-            <IntegrationGuide formId={id} slug={slug} />
+            <IntegrationGuide slug={slug} />
 
             <Card title="Schema" className="!shadow-sm">
                 {schema ? (
@@ -260,18 +250,16 @@ export function FormDetails({
 }
 
 function IntegrationGuide({
-    formId,
     slug,
 }: {
-    formId: string;
-    slug: string | null;
+    slug: string;
 }) {
     const [htmlCopied, setHtmlCopied] = useState(false);
     const [jsCopied, setJsCopied] = useState(false);
 
     const endpoint = "/api/submit";
-    const identifier = slug ?? formId;
-    const identifierField = slug ? "slug" : "formId";
+    const identifier = slug;
+    const identifierField = "slug";
 
     const htmlSnippet = `<!-- HTML form -->
 <form action="${endpoint}" method="POST">
