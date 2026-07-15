@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button } from "@/components/ui/button";
 import { register } from "@/app/actions/auth";
 
 export default async function RegisterPage({
@@ -10,37 +10,40 @@ export default async function RegisterPage({
 
     return (
         <>
-            <h1 className="mb-6 text-center text-2xl font-bold text-gray-900">
-                Create your account
-            </h1>
+            <div className="mb-8">
+                <h1 className="font-heading text-2xl font-semibold text-on-surface tracking-tight">Create your account</h1>
+                <p className="text-sm text-on-surface-variant mt-1">Start building forms in seconds</p>
+            </div>
 
             {params.error ? (
-                <p className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
-                    {params.error}
-                </p>
+                <div className="mb-6 rounded-lg bg-error-container/10 border border-error/20 px-4 py-3 flex items-center gap-3">
+                    <span className="text-destructive text-sm font-bold">!</span>
+                    <p className="text-sm font-medium text-on-error-container">{params.error}</p>
+                </div>
             ) : null}
 
-            <form action={register} className="space-y-4">
-                <div>
+            <form action={register} className="space-y-5">
+                <div className="space-y-2">
                     <label
                         htmlFor="email"
-                        className="block text-sm font-medium text-gray-700"
+                        className="label-caps block text-on-surface-variant"
                     >
-                        Email
+                        Email Address
                     </label>
                     <input
                         id="email"
                         name="email"
                         type="email"
                         required
-                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 outline-none focus:border-black focus:ring-1 focus:ring-black"
+                        className="mt-1 block w-full rounded-lg border border-border-muted bg-white px-4 py-3 text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-outline-variant"
+                        placeholder="name@company.com"
                     />
                 </div>
 
-                <div>
+                <div className="space-y-2">
                     <label
                         htmlFor="password"
-                        className="block text-sm font-medium text-gray-700"
+                        className="label-caps block text-on-surface-variant"
                     >
                         Password
                     </label>
@@ -50,29 +53,27 @@ export default async function RegisterPage({
                         type="password"
                         required
                         minLength={8}
-                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 outline-none focus:border-black focus:ring-1 focus:ring-black"
+                        className="mt-1 block w-full rounded-lg border border-border-muted bg-white px-4 py-3 text-on-surface outline-none transition-all focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-outline-variant"
+                        placeholder="Min. 8 characters"
                     />
                 </div>
 
-                <Button
-                    htmlType="submit"
-                    block
-                    type="primary"
-                    className="!bg-black !text-white !font-semibold !border-none hover:!bg-gray-800"
-                >
+                <Button type="submit" className="w-full font-semibold">
                     Create account
                 </Button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-gray-500">
-                Already have an account?{" "}
-                <a
-                    href="/auth"
-                    className="font-medium text-black underline underline-offset-2 hover:text-gray-600"
-                >
-                    Sign in
-                </a>
-            </p>
+            <div className="mt-8 pt-6 border-t border-border-muted text-center">
+                <p className="text-sm text-on-surface-variant">
+                    Already have an account?{" "}
+                    <a
+                        href="/auth"
+                        className="text-on-surface font-semibold hover:underline ml-1"
+                    >
+                        Sign in
+                    </a>
+                </p>
+            </div>
         </>
     );
 }

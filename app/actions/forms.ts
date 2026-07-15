@@ -40,10 +40,12 @@ export async function updateForm(formId: string, formData: FormData) {
 
     const title = formData.get("title") as string;
     const slug = (formData.get("slug") as string)?.trim();
+    const webhookUrl = (formData.get("webhookUrl") as string)?.trim() || null;
 
     const data: Record<string, unknown> = {};
     if (title?.trim()) data.title = title.trim();
     if (slug) data.slug = await ensureSlugUnique(slug, formId);
+    data.webhookUrl = webhookUrl;
 
     await prisma.form.update({ where: { id: formId }, data });
     redirect(`/dashboard/forms/${formId}`);

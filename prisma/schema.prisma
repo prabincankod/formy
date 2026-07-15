@@ -20,6 +20,7 @@ model Form {
 
   title String
   slug  String @unique
+  webhookUrl String?
 
   submissions Submission[]
   createdBy   User         @relation(fields: [createdById], references: [id])

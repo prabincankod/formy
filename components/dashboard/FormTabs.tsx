@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition, useMemo } from "react";
-import { Tabs, Button, Tag, Tooltip, Popconfirm, Form } from "antd";
+import { Tabs, Form } from "antd";
 import { ArrowLeft, BarChart3, Eye, Code2, Edit3, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useQueryState, parseAsInteger, parseAsString } from "nuqs";
@@ -10,6 +10,24 @@ import { FormDetailsTab } from "@/components/dashboard/tabs/FormDetailsTab";
 import { FormSubmissionsTab } from "@/components/dashboard/tabs/FormSubmissionsTab";
 import { FormIntegrationTab } from "@/components/dashboard/tabs/FormIntegrationTab";
 import { FormSettingsTab } from "@/components/dashboard/tabs/FormSettingsTab";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface SubmissionRow {
     id: string;
@@ -26,6 +44,7 @@ export function FormTabs({
     total: initialTotal,
     page: _page,
     pageSize,
+    webhookUrl: initialWebhookUrl,
 }: {
     id: string;
     title: string;
@@ -35,6 +54,7 @@ export function FormTabs({
     total: number;
     page: number;
     pageSize: number;
+    webhookUrl: string | null;
 }) {
     const router = useRouter();
     const [pending, startTransition] = useTransition();
@@ -53,56 +73,57 @@ export function FormTabs({
         const fd = new FormData();
         fd.set("title", values.title);
         fd.set("slug", values.slug || "");
+        fd.set("webhookUrl", values.webhookUrl || "");
         startTransition(() => updateForm(id, fd));
     };
 
     const handleDelete = () => startTransition(() => deleteForm(id));
 
-    const handleExport = () => {
+    const handleExport = (format: string) => {
         const a = document.createElement("a");
-        a.href = `/api/forms/${id}/export`;
+        a.href = `/api/forms/${id}/export?format=${format}`;
         a.click();
     };
 
     const columns = useMemo(
         () => [
             {
-                title: "ID",
+                title: <span className="label-caps text-on-surface-variant">ID</span>,
                 dataIndex: "id",
                 key: "id",
                 width: 80,
                 render: (rid: string) => (
-                    <code className="text-xs text-gray-500">{rid.slice(0, 8)}…</code>
+                    <code className="text-xs font-mono text-on-surface-variant">{rid.slice(0, 8)}…</code>
                 ),
             },
             {
-                title: "Data",
+                title: <span className="label-caps text-on-surface-variant">Data</span>,
                 key: "data",
                 render: (_: unknown, record: SubmissionRow) => {
                     const entries = Object.entries(record.data).slice(0, 3);
                     return (
                         <div className="flex flex-wrap gap-1">
                             {entries.map(([key, value]) => (
-                                <Tag key={key} className="!text-xs">
+                                <Badge key={key} variant="outline" className="text-xs font-mono">
                                     {key}: {String(value).slice(0, 30)}
-                                </Tag>
+                                </Badge>
                             ))}
                             {Object.keys(record.data).length > 3 && (
-                                <Tag className="!text-xs !text-gray-400">
+                                <Badge variant="outline" className="text-xs text-on-surface-variant">
                                     +{Object.keys(record.data).length - 3} more
-                                </Tag>
+                                </Badge>
                             )}
                         </div>
                     );
                 },
             },
             {
-                title: "Submitted",
+                title: <span className="label-caps text-on-surface-variant">Submitted</span>,
                 dataIndex: "createdAt",
                 key: "createdAt",
                 width: 180,
                 render: (date: Date) => (
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-on-surface-variant">
                         {new Date(date).toLocaleString()}
                     </span>
                 ),
@@ -113,36 +134,56 @@ export function FormTabs({
                 width: 100,
                 render: (_: unknown, record: SubmissionRow) => (
                     <div className="flex gap-1">
-                        <Tooltip title="View details">
-                            <Button
-                                type="text"
-                                size="small"
-                                icon={<Eye size={14} />}
-                                onClick={() =>
-                                    router.push(
-                                        `/dashboard/forms/${id}/submissions/${record.id}`
-                                    )
-                                }
-                            />
+                        <Tooltip>
+                            <TooltipTrigger
+                                render={<Button
+                                    variant="ghost"
+                                    size="icon-sm"
+                                    onClick={() =>
+                                        router.push(
+                                            `/dashboard/forms/${id}/submissions/${record.id}`
+                                        )
+                                    }
+                                />}
+                            >
+                                <Eye size={14} />
+                            </TooltipTrigger>
+                            <TooltipContent>View details</TooltipContent>
                         </Tooltip>
-                        <Popconfirm
-                            title="Delete this submission?"
-                            onConfirm={async () => {
-                                await deleteSubmission(record.id);
-                                router.refresh();
-                            }}
-                            okText="Delete"
-                            okButtonProps={{ danger: true }}
-                        >
-                            <Tooltip title="Delete">
-                                <Button
-                                    type="text"
-                                    size="small"
-                                    danger
-                                    icon={<Trash2 size={14} />}
+                        <AlertDialog>
+                            <Tooltip>
+                                <TooltipTrigger
+                                    render={
+                                        <AlertDialogTrigger
+                                            render={<Button variant="ghost" size="icon-sm" />}
+                                        >
+                                            <Trash2 size={14} className="text-destructive" />
+                                        </AlertDialogTrigger>
+                                    }
                                 />
+                                <TooltipContent>Delete</TooltipContent>
                             </Tooltip>
-                        </Popconfirm>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete this submission?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        variant="destructive"
+                                        onClick={async () => {
+                                            await deleteSubmission(record.id);
+                                            router.refresh();
+                                        }}
+                                    >
+                                        Delete
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 ),
             },
@@ -153,18 +194,18 @@ export function FormTabs({
     return (
         <div className="space-y-8">
             <Button
-                type="text"
-                icon={<ArrowLeft size={16} />}
+                variant="ghost"
                 onClick={() => router.push("/dashboard/forms")}
-                className="!-ml-2"
+                className="-ml-2"
             >
+                <ArrowLeft size={16} />
                 Back to forms
             </Button>
 
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-                    <p className="mt-1 text-sm text-gray-500">Form ID: {id}</p>
+                    <h2 className="text-2xl font-semibold text-on-surface tracking-tight">{title}</h2>
+                    <p className="mt-1 text-sm text-on-surface-variant">Form ID: {id}</p>
                 </div>
             </div>
 
@@ -194,7 +235,7 @@ export function FormTabs({
                                 <Eye size={16} />
                                 Submissions
                                 {submissionCount > 0 && (
-                                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500">
+                                    <span className="rounded-full bg-surface-container-highest px-2 py-0.5 text-xs text-on-surface-variant">
                                         {submissionCount}
                                     </span>
                                 )}
@@ -240,6 +281,7 @@ export function FormTabs({
                                 pending={pending}
                                 initialTitle={title}
                                 initialSlug={slug}
+                                initialWebhookUrl={initialWebhookUrl ?? ""}
                                 handleEdit={handleEdit}
                                 handleDelete={handleDelete}
                             />

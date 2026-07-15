@@ -3,7 +3,7 @@ import { prisma } from "@/app/lib/prisma";
 import { auth } from "@/app/lib/auth";
 
 export async function GET(
-    _request: NextRequest,
+    request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await auth();
@@ -12,6 +12,7 @@ export async function GET(
     }
 
     const { id } = await params;
+    const format = request.nextUrl.searchParams.get("format") ?? "csv";
 
     const form = await prisma.form.findUnique({
         where: { id },
@@ -27,27 +28,33 @@ export async function GET(
         orderBy: { createdAt: "desc" },
     });
 
+    if (format === "json") {
+        const data = submissions.map((s) => ({
+            id: s.id,
+            ...(s.data as Record<string, unknown>),
+            submitted: s.createdAt.toISOString(),
+        }));
+        return NextResponse.json(data, {
+            headers: {
+                "Content-Disposition": `attachment; filename="${form.title.replace(/\s+/g, "_")}_submissions.json"`,
+            },
+        });
+    }
+
     const keys = new Set<string>();
     submissions.forEach((s) => {
-        const data = s.data as Record<string, unknown>;
-        Object.keys(data).forEach((k) => keys.add(k));
+        Object.keys(s.data as Record<string, unknown>).forEach((k) => keys.add(k));
     });
     const headers = ["ID", ...keys, "Submitted"];
 
     const rows = submissions.map((s) => {
         const data = s.data as Record<string, unknown>;
-        return [
-            s.id,
-            ...headers.slice(1, -1).map((k) => String(data[k] ?? "")),
-            s.createdAt.toISOString(),
-        ]
+        return [s.id, ...headers.slice(1, -1).map((k) => String(data[k] ?? "")), s.createdAt.toISOString()]
             .map((v) => JSON.stringify(v))
             .join(",");
     });
 
-    const csv = "\uFEFF" + [headers.join(","), ...rows].join("\n");
-
-    return new NextResponse(csv, {
+    return new NextResponse("\uFEFF" + [headers.join(","), ...rows].join("\n"), {
         headers: {
             "Content-Type": "text/csv; charset=utf-8",
             "Content-Disposition": `attachment; filename="${form.title.replace(/\s+/g, "_")}_submissions.csv"`,

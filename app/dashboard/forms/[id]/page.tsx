@@ -66,6 +66,7 @@ export default async function FormDetailPage({
             total={total}
             page={page}
             pageSize={pageSize}
+            webhookUrl={form.webhookUrl}
         />
     );
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
+import { sendNotification } from "@/app/lib/email";
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -34,8 +35,8 @@ export async function POST(request: NextRequest) {
     }
 
     const form = formId
-        ? await prisma.form.findUnique({ where: { id: formId } })
-        : await prisma.form.findUnique({ where: { slug } });
+        ? await prisma.form.findUnique({ where: { id: formId }, include: { createdBy: { select: { email: true } } } })
+        : await prisma.form.findUnique({ where: { slug }, include: { createdBy: { select: { email: true } } } });
 
     if (!form) {
         return NextResponse.json(
@@ -46,11 +47,39 @@ export async function POST(request: NextRequest) {
 
     const { formId: _f, slug: _s, ...rest } = body;
 
-    await prisma.submission.create({
+    const sub = await prisma.submission.create({
         data: {
             formId: form.id,
             data: rest as object,
         },
+    });
+
+    const host = request.headers.get("host") ?? "localhost:3000";
+    const proto = request.headers.get("x-forwarded-proto") ?? "http";
+    const origin = `${proto}://${host}`;
+
+    if (form.webhookUrl) {
+        fetch(form.webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                event: "submission.created",
+                formId: form.id,
+                formTitle: form.title,
+                submissionId: sub.id,
+                data: rest,
+                submittedAt: sub.createdAt.toISOString(),
+            }),
+        }).catch(() => {});
+    }
+
+    await sendNotification({
+        to: form.createdBy.email,
+        logoUrl: `${origin}/logo.png`,
+        formTitle: form.title,
+        submissionId: sub.id,
+        data: rest as Record<string, unknown>,
+        submittedAt: sub.createdAt.toISOString(),
     });
 
     if (contentType.includes("application/json")) {
@@ -60,9 +89,7 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    const host = request.headers.get("host") ?? "localhost:3000";
-    const proto = request.headers.get("x-forwarded-proto") ?? "http";
-    const redirectUrl = new URL("/success", `${proto}://${host}`);
+    const redirectUrl = new URL("/success", origin);
     redirectUrl.searchParams.set("title", form.title);
 
     return NextResponse.redirect(redirectUrl.toString(), { status: 303, headers: corsHeaders });

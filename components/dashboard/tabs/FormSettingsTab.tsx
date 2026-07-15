@@ -1,6 +1,20 @@
-import { Card, Button, Popconfirm, Form, Input } from "antd";
-import { Trash2 } from "lucide-react";
-import type { FormInstance } from "antd/es/form";
+"use client";
+
+import type { FormInstance } from "antd";
+import { Form, Input as AntInput } from "antd";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export function FormSettingsTab({
     id,
@@ -8,6 +22,7 @@ export function FormSettingsTab({
     pending,
     initialTitle,
     initialSlug,
+    initialWebhookUrl,
     handleEdit,
     handleDelete,
 }: {
@@ -16,69 +31,89 @@ export function FormSettingsTab({
     pending: boolean;
     initialTitle: string;
     initialSlug: string;
+    initialWebhookUrl: string;
     handleEdit: (values: Record<string, string>) => void;
     handleDelete: () => void;
 }) {
     return (
-        <div className="space-y-8 max-w-lg">
-            <Card title="General" className="!shadow-sm">
-                <Form
-                    form={editForm}
-                    layout="vertical"
-                    onFinish={handleEdit}
-                    autoComplete="off"
-                    initialValues={{ title: initialTitle, slug: initialSlug }}
-                >
-                    <Form.Item
-                        name="title"
-                        label="Title"
-                        rules={[{ required: true, message: "Enter a title" }]}
+        <div className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-base">General</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Form
+                        form={editForm}
+                        layout="vertical"
+                        onFinish={handleEdit}
+                        initialValues={{ title: initialTitle, slug: initialSlug, webhookUrl: initialWebhookUrl }}
+                        className="max-w-md space-y-4"
                     >
-                        <Input placeholder="Form title" />
-                    </Form.Item>
-                    <Form.Item
-                        name="slug"
-                        label="Slug"
-                        rules={[
-                            {
-                                pattern: /^[a-z0-9-]*$/,
-                                message: "Only lowercase letters, numbers, and hyphens",
-                            },
-                        ]}
-                    >
-                        <Input placeholder="my-form-slug" />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            loading={pending}
-                            style={{ background: "#FFC437", borderColor: "#FFC437", color: "#000" }}
+                        <Form.Item
+                            name="title"
+                            label={<span className="label-caps text-on-surface-variant">Title</span>}
+                            rules={[{ required: true, message: "Title is required" }]}
                         >
-                            Save Changes
+                            <AntInput placeholder="Form title" className="w-full" />
+                        </Form.Item>
+                        <Form.Item
+                            name="slug"
+                            label={<span className="label-caps text-on-surface-variant">Slug</span>}
+                            rules={[
+                                {
+                                    pattern: /^[a-z0-9-]*$/,
+                                    message: "Only lowercase letters, numbers, and hyphens",
+                                },
+                            ]}
+                        >
+                            <AntInput placeholder="form-slug" className="w-full" />
+                        </Form.Item>
+                        <Form.Item
+                            name="webhookUrl"
+                            label={<span className="label-caps text-on-surface-variant">Webhook URL</span>}
+                            extra={
+                                <span className="text-xs text-on-surface-variant">
+                                    POST request with submission data on each new entry.
+                                </span>
+                            }
+                        >
+                            <AntInput placeholder="https://example.com/webhook" className="w-full" />
+                        </Form.Item>
+                        <Button type="submit" disabled={pending}>
+                            {pending ? "Saving..." : "Save"}
                         </Button>
-                    </Form.Item>
-                </Form>
+                    </Form>
+                </CardContent>
             </Card>
 
-            <Card
-                title={<span className="text-red-600">Danger Zone</span>}
-                className="!shadow-sm !border-red-200"
-            >
-                <p className="mb-4 text-sm text-gray-600">
-                    Once you delete a form, all submissions and data are permanently removed.
-                </p>
-                <Popconfirm
-                    title="Delete this form?"
-                    description="All submissions and data will be permanently deleted."
-                    onConfirm={handleDelete}
-                    okText="Delete"
-                    okButtonProps={{ danger: true }}
-                >
-                    <Button danger icon={<Trash2 size={16} />}>
-                        Delete Form
-                    </Button>
-                </Popconfirm>
+            <Card className="border-destructive/20">
+                <CardHeader>
+                    <CardTitle className="text-base text-destructive">Danger Zone</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-on-surface-variant mb-4">
+                        Once you delete this form, all submissions will be permanently removed.
+                    </p>
+                    <AlertDialog>
+                        <AlertDialogTrigger render={<Button variant="destructive" />}>
+                            Delete Form
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Delete this form?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. All submissions will be deleted.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction variant="destructive" onClick={handleDelete}>
+                                    Delete
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </CardContent>
             </Card>
         </div>
     );

@@ -1,20 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Layout, Menu, Button, Dropdown, Avatar, Space } from "antd";
-import {
-    LayoutDashboard,
-    FileText,
-    Settings,
-    Menu as MenuIcon,
-    LogOut,
-    User,
-} from "lucide-react";
+import { LayoutDashboard, FileText, Settings, Menu as MenuIcon, LogOut, User } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logout } from "@/app/actions/auth";
-
-const { Sider, Header, Content } = Layout;
+import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const menuItems = [
     {
@@ -41,13 +40,11 @@ export function DashboardShell({
     children: React.ReactNode;
     user?: { email?: string | null };
 }) {
-    const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const pathname = usePathname();
 
     return (
-        <Layout className="min-h-screen">
-            {/* Mobile overlay */}
+        <div className="flex min-h-screen bg-background">
             {mobileOpen && (
                 <div
                     className="fixed inset-0 z-40 bg-black/50 lg:hidden"
@@ -55,85 +52,91 @@ export function DashboardShell({
                 />
             )}
 
-            <Sider
-                theme="light"
-                breakpoint="lg"
-                collapsedWidth={0}
-                trigger={null}
-                className={`!fixed left-0 top-0 z-50 h-screen border-r border-gray-200 !transition-all lg:!relative ${
-                    mobileOpen ? "!w-60" : "!w-0 lg:!w-60"
-                } ${collapsed ? "lg:!w-16" : ""}`}
+            <aside
+                className={`fixed left-0 top-0 z-50 h-screen w-[240px] bg-surface-container-low border-r border-border-muted flex flex-col transition-transform duration-300 ${
+                    mobileOpen ? "translate-x-0" : "-translate-x-full"
+                } lg:translate-x-0`}
             >
-                <div className="flex h-16 items-center justify-center border-b border-gray-200">
-                    <span className="text-lg font-bold text-black">
-                        {collapsed ? "F" : "Formy"}
-                    </span>
+                <div className="px-6 py-8 mb-6">
+                    <Image src="/logo.png" alt="Formy" width={32} height={32} className="h-8 w-auto" />
+                    <p className="mt-2 text-[10px] font-mono text-on-surface-variant uppercase tracking-wider opacity-70">Form Builder</p>
                 </div>
 
-                <Menu
-                    mode="inline"
-                    selectedKeys={[pathname]}
-                    items={menuItems}
-                    className="!border-r-0"
-                    inlineCollapsed={collapsed}
-                />
+                <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
+                    {menuItems.map((item) => {
+                        const isActive = pathname === item.key;
+                        return (
+                            <div
+                                key={item.key}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
+                                    isActive
+                                        ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                                        : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high"
+                                }`}
+                            >
+                                {item.icon}
+                                {item.label}
+                            </div>
+                        );
+                    })}
+                </nav>
 
-                <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 p-4">
-                    <Space className="text-sm text-gray-500">
-                        <User size={14} />
+                <div className="p-3 border-t border-border-muted">
+                    <div className="flex items-center gap-3 px-3 py-2.5 text-sm text-on-surface-variant rounded-xl hover:bg-surface-container-high transition-colors">
+                        <User size={16} />
                         <span className="truncate">{user?.email}</span>
-                    </Space>
+                    </div>
                 </div>
-            </Sider>
+            </aside>
 
-            <Layout>
-                <Header className="!flex !h-16 !items-center !justify-between !bg-white !px-4 !border-b !border-gray-200 lg:!px-6">
+            <div className="flex-1 flex flex-col lg:ml-[240px]">
+                <header className="flex h-16 items-center justify-between bg-surface px-6 border-b border-border-muted shrink-0">
                     <Button
-                        type="text"
-                        icon={<MenuIcon size={20} />}
-                        onClick={() => {
-                            if (window.innerWidth < 1024) {
-                                setMobileOpen(!mobileOpen);
-                            } else {
-                                setCollapsed(!collapsed);
-                            }
-                        }}
-                        className="!flex !items-center !justify-center"
-                    />
-
-                    <Dropdown
-                        menu={{
-                            items: [
-                                {
-                                    key: "logout",
-                                    icon: <LogOut size={14} />,
-                                    label: (
-                                        <form action={logout}>
-                                            <button type="submit" className="w-full text-left text-gray-700">
-                                                Sign out
-                                            </button>
-                                        </form>
-                                    ),
-                                },
-                            ],
-                        }}
-                        placement="bottomRight"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setMobileOpen(!mobileOpen)}
+                        className="lg:hidden text-on-surface-variant"
                     >
-                        <Button type="text" className="!flex !items-center !gap-2">
-                            <Avatar size="small" className="!bg-[#FFC437]">
-                                {user?.email?.charAt(0).toUpperCase()}
-                            </Avatar>
-                            <span className="hidden text-sm sm:inline">
-                                {user?.email}
-                            </span>
-                        </Button>
-                    </Dropdown>
-                </Header>
+                        <MenuIcon size={20} />
+                    </Button>
 
-                <Content className="m-4 min-h-[calc(100vh-5rem)] lg:m-6">
-                    {children}
-                </Content>
-            </Layout>
-        </Layout>
+                    <div className="ml-auto flex items-center gap-4">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger
+                                render={<button type="button" className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm hover:bg-surface-container-high transition-colors" />}
+                            >
+                                <Avatar size="sm">
+                                    <AvatarFallback className="bg-primary text-primary-foreground">
+                                        {user?.email?.charAt(0).toUpperCase()}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <span className="hidden text-sm sm:inline text-on-surface-variant">
+                                    {user?.email}
+                                </span>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem>
+                                    <form action={logout} className="w-full">
+                                        <button
+                                            type="submit"
+                                            className="flex w-full items-center gap-1.5 text-left text-sm"
+                                        >
+                                            <LogOut size={14} />
+                                            Sign out
+                                        </button>
+                                    </form>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </header>
+
+                <main className="flex-1 p-6 lg:p-10 overflow-y-auto">
+                    <div className="max-w-[1440px] mx-auto">
+                        {children}
+                    </div>
+                </main>
+            </div>
+        </div>
     );
 }

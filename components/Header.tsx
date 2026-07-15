@@ -1,25 +1,26 @@
+import Link from "next/link";
+import Image from "next/image";
+
 export default function Header() {
     return (
-        <header className="bg-white">
-            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <a className="block text-black" href="/">
-                    <span className="sr-only">Home</span>
-                    <svg
-                        className="h-8"
-                        viewBox="0 0 28 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
+        <header className="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-border-muted">
+            <div className="max-w-[1200px] mx-auto h-20 flex items-center justify-between px-4 md:px-10">
+                <Link href="/" className="flex items-center gap-2">
+                    <Image src="/logo.png" alt="Formy" width={32} height={32} className="h-8 w-auto" />
+                </Link>
 
-                    </svg>
-                </a>
+                <div className="hidden md:flex items-center gap-8">
+                    <a className="text-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#features">Features</a>
+                    <a className="text-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#docs">Docs</a>
+                    <a className="text-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#pricing">Pricing</a>
+                </div>
 
-                <a
+                <Link
                     href="/auth"
-                    className="rounded-md bg-[#FFC437] px-5 py-2.5 text-sm font-medium text-black transition hover:bg-[#f0b82e]"
+                    className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg text-sm font-semibold hover:brightness-95 transition-all active:scale-[0.98]"
                 >
                     Get Started
-                </a>
+                </Link>
             </div>
         </header>
     )

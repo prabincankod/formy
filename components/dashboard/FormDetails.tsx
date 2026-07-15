@@ -1,15 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import {
-    Card,
-    Descriptions,
-    Button,
-    Modal,
-    Form,
-    Input,
-    Popconfirm,
-} from "antd";
+import { useState, useRef, useTransition } from "react";
+import { Descriptions } from "antd";
 import {
     ArrowLeft,
     BarChart3,
@@ -21,7 +13,27 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { updateForm, deleteForm } from "@/app/actions/forms";
-import { useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function FormDetails({
     id,
@@ -37,142 +49,163 @@ export function FormDetails({
     const router = useRouter();
     const [editOpen, setEditOpen] = useState(false);
     const [pending, startTransition] = useTransition();
-    const [editForm] = Form.useForm();
+    const titleRef = useRef<HTMLInputElement>(null);
+    const slugRef = useRef<HTMLInputElement>(null);
 
-    const handleEdit = (values: Record<string, string>) => {
+    const handleEdit = (e: React.FormEvent) => {
+        e.preventDefault();
         const fd = new FormData();
-        fd.set("title", values.title);
-        fd.set("slug", values.slug || "");
+        fd.set("title", titleRef.current?.value || "");
+        fd.set("slug", slugRef.current?.value || "");
         startTransition(() => updateForm(id, fd));
     };
 
     return (
         <div className="space-y-6">
             <Button
-                type="text"
-                icon={<ArrowLeft size={16} />}
+                variant="ghost"
                 onClick={() => router.push("/dashboard/forms")}
-                className="!-ml-2"
+                className="-ml-2"
             >
+                <ArrowLeft size={16} />
                 Back to forms
             </Button>
 
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <h2 className="text-2xl font-bold text-foreground">{title}</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Form ID: {id}
                     </p>
                 </div>
 
                 <div className="flex gap-2">
                     <Button
-                        icon={<Edit3 size={16} />}
+                        variant="outline"
                         onClick={() => {
-                            editForm.setFieldsValue({ title, slug });
+                            if (titleRef.current) titleRef.current.value = title;
+                            if (slugRef.current) slugRef.current.value = slug;
                             setEditOpen(true);
                         }}
                     >
+                        <Edit3 size={16} />
                         Edit
                     </Button>
-                    <Popconfirm
-                        title="Delete this form?"
-                        description="All submissions and data will be permanently deleted."
-                        onConfirm={() => startTransition(() => deleteForm(id))}
-                        okText="Delete"
-                        okButtonProps={{ danger: true }}
-                    >
-                        <Button danger icon={<Trash2 size={16} />}>
+                    <AlertDialog>
+                        <AlertDialogTrigger
+                            render={<Button variant="destructive" />}
+                        >
+                            <Trash2 size={16} />
                             Delete
-                        </Button>
-                    </Popconfirm>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Delete this form?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    All submissions and data will be permanently deleted.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                    variant="destructive"
+                                    onClick={() => startTransition(() => deleteForm(id))}
+                                >
+                                    Delete
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                     <Button
-                        type="primary"
-                        icon={<BarChart3 size={16} />}
                         onClick={() => router.push(`/dashboard/forms/${id}/submissions`)}
                     >
+                        <BarChart3 size={16} />
                         Submissions ({submissionCount})
                     </Button>
                 </div>
             </div>
 
-            <Card className="!shadow-sm">
-                <Descriptions
-                    column={{ xs: 1, sm: 2 }}
-                    classNames={{ label: "!text-gray-500 !font-normal" }}
-                >
-                    <Descriptions.Item label="Title">{title}</Descriptions.Item>
-                    <Descriptions.Item label="Slug">
-                        <code className="rounded bg-gray-100 px-2 py-0.5 text-xs">
-                            {slug}
-                        </code>
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Submissions">
-                        {submissionCount}
-                    </Descriptions.Item>
-                </Descriptions>
+            <Card>
+                <CardContent className="pt-6">
+                    <Descriptions
+                        column={{ xs: 1, sm: 2 }}
+                        classNames={{ label: "!text-muted-foreground !font-normal" }}
+                    >
+                        <Descriptions.Item label="Title">{title}</Descriptions.Item>
+                        <Descriptions.Item label="Slug">
+                            <code className="rounded bg-muted px-2 py-0.5 text-xs">
+                                {slug}
+                            </code>
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Submissions">
+                            {submissionCount}
+                        </Descriptions.Item>
+                    </Descriptions>
+                </CardContent>
             </Card>
 
-            <Card title="Submit Endpoint" className="!shadow-sm">
-                <div className="flex items-center gap-2">
-                    <LinkIcon size={16} className="text-gray-400" />
-                    <code className="flex-1 rounded bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                        POST /api/submit (slug: {slug})
-                    </code>
-                    <Button
-                        type="primary"
-                        size="small"
-                        onClick={() =>
-                            navigator.clipboard.writeText(
-                                `${typeof window !== "undefined" ? window.location.origin : ""}/api/submit`
-                            )
-                        }
-                    >
-                        Copy
-                    </Button>
-                </div>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Submit Endpoint</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center gap-2">
+                        <LinkIcon size={16} className="text-muted-foreground" />
+                        <code className="flex-1 rounded bg-muted px-3 py-2 text-sm text-muted-foreground">
+                            POST /api/submit (slug: {slug})
+                        </code>
+                        <Button
+                            size="sm"
+                            onClick={() =>
+                                navigator.clipboard.writeText(
+                                    `${typeof window !== "undefined" ? window.location.origin : ""}/api/submit`
+                                )
+                            }
+                        >
+                            Copy
+                        </Button>
+                    </div>
+                </CardContent>
             </Card>
 
             <IntegrationGuide slug={slug} />
 
-            <Modal
-                title="Edit Form"
-                open={editOpen}
-                onCancel={() => setEditOpen(false)}
-                onOk={() => editForm.submit()}
-                confirmLoading={pending}
-                okText="Save"
-                okButtonProps={{
-                    style: { background: "#FFC437", borderColor: "#FFC437", color: "#000" },
-                }}
-            >
-                <Form
-                    form={editForm}
-                    layout="vertical"
-                    onFinish={handleEdit}
-                    autoComplete="off"
-                >
-                    <Form.Item
-                        name="title"
-                        label="Title"
-                        rules={[{ required: true, message: "Enter a title" }]}
-                    >
-                        <Input placeholder="Form title" />
-                    </Form.Item>
-                    <Form.Item
-                        name="slug"
-                        label="Slug"
-                        rules={[
-                            {
-                                pattern: /^[a-z0-9-]*$/,
-                                message: "Only lowercase letters, numbers, and hyphens",
-                            },
-                        ]}
-                    >
-                        <Input placeholder="my-form-slug" />
-                    </Form.Item>
-                </Form>
-            </Modal>
+            <Dialog open={editOpen} onOpenChange={(o) => { if (!o) setEditOpen(false); }}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Edit Form</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleEdit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-title">Title</Label>
+                            <Input
+                                id="edit-title"
+                                ref={titleRef}
+                                defaultValue={title}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-slug">Slug</Label>
+                            <Input
+                                id="edit-slug"
+                                ref={slugRef}
+                                defaultValue={slug}
+                                pattern="^[a-z0-9-]*$"
+                                title="Only lowercase letters, numbers, and hyphens"
+                            />
+                        </div>
+                        <div className="flex justify-end gap-2">
+                            <Button type="button" variant="outline" onClick={() => setEditOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button type="submit" disabled={pending}>
+                                {pending ? "Saving..." : "Save"}
+                            </Button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
@@ -286,128 +319,127 @@ const result = await res.json();
 // 201: { success: true }`;
 
     return (
-        <Card
-            title={
-                <span className="flex items-center gap-2">
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
                     <Code2 size={16} />
                     Integration Guide
-                </span>
-            }
-            className="!shadow-sm"
-        >
-            <div className="space-y-6">
-                <div>
-                    <p className="mb-1 text-sm text-gray-600">
-                        Submit data from your own frontend. CORS is enabled for all origins.
-                        Accepts{" "}
-                        <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs">
-                            multipart/form-data
-                        </code>{" "}
-                        and{" "}
-                        <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs">
-                            application/json
-                        </code>
-                        .
-                    </p>
-                </div>
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-6">
+                    <div>
+                        <p className="mb-1 text-sm text-muted-foreground">
+                            Submit data from your own frontend. CORS is enabled for all origins.
+                            Accepts{" "}
+                            <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
+                                multipart/form-data
+                            </code>{" "}
+                            and{" "}
+                            <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
+                                application/json
+                            </code>
+                            .
+                        </p>
+                    </div>
 
-                <div>
-                    <h4 className="mb-2 text-sm font-semibold text-gray-700">Endpoint</h4>
-                    <div className="flex items-center gap-2">
-                        <code className="flex-1 rounded bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                            POST {endpoint}
-                        </code>
+                    <div>
+                        <h4 className="mb-2 text-sm font-semibold text-foreground">Endpoint</h4>
+                        <div className="flex items-center gap-2">
+                            <code className="flex-1 rounded bg-muted px-3 py-2 text-sm text-muted-foreground">
+                                POST {endpoint}
+                            </code>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                    navigator.clipboard.writeText(endpoint);
+                                    setHtmlCopied(true);
+                                    setTimeout(() => setHtmlCopied(false), 2000);
+                                }}
+                            >
+                                {htmlCopied ? "Copied" : "Copy"}
+                            </Button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 className="mb-2 text-sm font-semibold text-foreground">JSON API</h4>
+                        <pre className="overflow-x-auto rounded-lg border border-border bg-muted p-4 text-xs text-foreground">
+                            {jsonSnippet}
+                        </pre>
                         <Button
-                            size="small"
-                            type="text"
-                            icon={htmlCopied ? <Check size={14} /> : undefined}
+                            size="sm"
+                            variant="outline"
+                            className="mt-2"
                             onClick={() => {
-                                navigator.clipboard.writeText(endpoint);
+                                navigator.clipboard.writeText(jsonSnippet);
+                                setJsCopied(true);
+                                setTimeout(() => setJsCopied(false), 2000);
+                            }}
+                        >
+                            {jsCopied ? "Copied" : "Copy JSON"}
+                        </Button>
+                    </div>
+
+                    <div>
+                        <h4 className="mb-2 text-sm font-semibold text-foreground">HTML form</h4>
+                        <pre className="overflow-x-auto rounded-lg border border-border bg-muted p-4 text-xs text-foreground">
+                            {htmlSnippet}
+                        </pre>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="mt-2"
+                            onClick={() => {
+                                navigator.clipboard.writeText(htmlSnippet);
                                 setHtmlCopied(true);
                                 setTimeout(() => setHtmlCopied(false), 2000);
                             }}
                         >
-                            {htmlCopied ? "Copied" : "Copy"}
+                            {htmlCopied ? "Copied" : "Copy HTML"}
+                        </Button>
+                    </div>
+
+                    <div>
+                        <h4 className="mb-2 text-sm font-semibold text-foreground">React component</h4>
+                        <pre className="overflow-x-auto rounded-lg border border-border bg-muted p-4 text-xs text-foreground">
+                            {reactSnippet}
+                        </pre>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="mt-2"
+                            onClick={() => {
+                                navigator.clipboard.writeText(reactSnippet);
+                                setReactCopied(true);
+                                setTimeout(() => setReactCopied(false), 2000);
+                            }}
+                        >
+                            {reactCopied ? "Copied" : "Copy React"}
+                        </Button>
+                    </div>
+
+                    <div>
+                        <h4 className="mb-2 text-sm font-semibold text-foreground">Vue 3 component</h4>
+                        <pre className="overflow-x-auto rounded-lg border border-border bg-muted p-4 text-xs text-foreground">
+                            {vueSnippet}
+                        </pre>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="mt-2"
+                            onClick={() => {
+                                navigator.clipboard.writeText(vueSnippet);
+                                setVueCopied(true);
+                                setTimeout(() => setVueCopied(false), 2000);
+                            }}
+                        >
+                            {vueCopied ? "Copied" : "Copy Vue"}
                         </Button>
                     </div>
                 </div>
-
-                <div>
-                    <h4 className="mb-2 text-sm font-semibold text-gray-700">JSON API</h4>
-                    <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs text-gray-800">
-                        {jsonSnippet}
-                    </pre>
-                    <Button
-                        size="small"
-                        className="mt-2"
-                        icon={jsCopied ? <Check size={14} /> : undefined}
-                        onClick={() => {
-                            navigator.clipboard.writeText(jsonSnippet);
-                            setJsCopied(true);
-                            setTimeout(() => setJsCopied(false), 2000);
-                        }}
-                    >
-                        {jsCopied ? "Copied" : "Copy JSON"}
-                    </Button>
-                </div>
-
-                <div>
-                    <h4 className="mb-2 text-sm font-semibold text-gray-700">HTML form</h4>
-                    <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs text-gray-800">
-                        {htmlSnippet}
-                    </pre>
-                    <Button
-                        size="small"
-                        className="mt-2"
-                        icon={htmlCopied ? <Check size={14} /> : undefined}
-                        onClick={() => {
-                            navigator.clipboard.writeText(htmlSnippet);
-                            setHtmlCopied(true);
-                            setTimeout(() => setHtmlCopied(false), 2000);
-                        }}
-                    >
-                        {htmlCopied ? "Copied" : "Copy HTML"}
-                    </Button>
-                </div>
-
-                <div>
-                    <h4 className="mb-2 text-sm font-semibold text-gray-700">React component</h4>
-                    <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs text-gray-800">
-                        {reactSnippet}
-                    </pre>
-                    <Button
-                        size="small"
-                        className="mt-2"
-                        icon={reactCopied ? <Check size={14} /> : undefined}
-                        onClick={() => {
-                            navigator.clipboard.writeText(reactSnippet);
-                            setReactCopied(true);
-                            setTimeout(() => setReactCopied(false), 2000);
-                        }}
-                    >
-                        {reactCopied ? "Copied" : "Copy React"}
-                    </Button>
-                </div>
-
-                <div>
-                    <h4 className="mb-2 text-sm font-semibold text-gray-700">Vue 3 component</h4>
-                    <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs text-gray-800">
-                        {vueSnippet}
-                    </pre>
-                    <Button
-                        size="small"
-                        className="mt-2"
-                        icon={vueCopied ? <Check size={14} /> : undefined}
-                        onClick={() => {
-                            navigator.clipboard.writeText(vueSnippet);
-                            setVueCopied(true);
-                            setTimeout(() => setVueCopied(false), 2000);
-                        }}
-                    >
-                        {vueCopied ? "Copied" : "Copy Vue"}
-                    </Button>
-                </div>
-            </div>
+            </CardContent>
         </Card>
     );
 }

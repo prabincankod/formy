@@ -1,6 +1,14 @@
 "use client";
 
-import { Modal, Form, Input } from "antd";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useTransition } from "react";
 import { createForm } from "@/app/actions/forms";
 
@@ -12,38 +20,37 @@ export function CreateFormDialog({
     onClose: () => void;
 }) {
     const [pending, startTransition] = useTransition();
-    const [form] = Form.useForm();
 
     return (
-        <Modal
-            title="Create Form"
-            open={open}
-            onCancel={onClose}
-            onOk={() => form.submit()}
-            confirmLoading={pending}
-            okText="Create"
-            okButtonProps={{
-                style: { background: "#FFC437", borderColor: "#FFC437", color: "#000" },
-            }}
-        >
-            <Form
-                form={form}
-                layout="vertical"
-                onFinish={(values) => {
-                    const fd = new FormData();
-                    fd.set("title", values.title);
-                    startTransition(() => createForm(fd));
-                }}
-                autoComplete="off"
-            >
-                <Form.Item
-                    name="title"
-                    label="Form title"
-                    rules={[{ required: true, message: "Enter a title" }]}
+        <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Create Form</DialogTitle>
+                </DialogHeader>
+                <form
+                    action={(fd) => startTransition(() => createForm(fd))}
+                    className="space-y-4"
                 >
-                    <Input placeholder="e.g. Customer Feedback" autoFocus />
-                </Form.Item>
-            </Form>
-        </Modal>
+                    <div className="space-y-2">
+                        <Label htmlFor="title">Form title</Label>
+                        <Input
+                            id="title"
+                            name="title"
+                            placeholder="e.g. Customer Feedback"
+                            required
+                            autoFocus
+                        />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                        <Button type="button" variant="outline" onClick={onClose}>
+                            Cancel
+                        </Button>
+                        <Button type="submit" disabled={pending}>
+                            {pending ? "Creating..." : "Create"}
+                        </Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 }

@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { promises as fs } from "node:fs";
-import path from "node:path";
-import os from "node:os";
+import { jwtVerify } from "jose";
 
 const SESSION_COOKIE =
     process.env.NODE_ENV === "production"
         ? "__Secure-next-auth.session-token"
         : "next-auth.session-token";
 
-const SESSION_DIR = path.join(os.tmpdir(), "formy-sessions");
+function getSecret(): Uint8Array {
+    return new TextEncoder().encode(process.env.NEXTAUTH_SECRET!);
+}
 
 export default async function proxy(req: NextRequest) {
     const token = req.cookies.get(SESSION_COOKIE)?.value;
@@ -17,12 +17,8 @@ export default async function proxy(req: NextRequest) {
     let valid = false;
     if (token) {
         try {
-            const raw = await fs.readFile(
-                path.join(SESSION_DIR, `sess_${token}`),
-                "utf-8"
-            );
-            const data = JSON.parse(raw);
-            valid = !!data._expires && Date.now() < data._expires;
+            await jwtVerify(token, getSecret());
+            valid = true;
         } catch {
             valid = false;
         }
