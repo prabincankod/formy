@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Sora, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { AntdRegistry } from "@/components/AntdRegistry";
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     title,
     description,
     icons: {
-        icon: "/logo.png",
+        icon: "/favicon.png",
         apple: "/logo.png",
     },
     manifest: "/site.webmanifest",
@@ -153,6 +154,12 @@ export default function RootLayout({
                         </ConfigProvider>
                     </AntdRegistry>
                 </Providers>
+                <Script
+                    defer
+                    src="https://cloud.umami.is/script.js"
+                    data-website-id="a2a57429-3bd0-4f0d-b0dd-7d72226e0a6b"
+                    strategy="afterInteractive"
+                />
             </body>
         </html>
     );
