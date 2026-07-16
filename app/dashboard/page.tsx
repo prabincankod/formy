@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { auth } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import { redirect } from "next/navigation";
 import { DashboardHome } from "@/components/dashboard/DashboardHome";
+
+export const metadata: Metadata = {
+    title: "Dashboard — Formy",
+    robots: { index: false, follow: false },
+};
 
 export default async function DashboardPage() {
   const session = await auth();

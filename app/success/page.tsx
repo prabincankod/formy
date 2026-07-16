@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle } from "lucide-react";
+
+export const metadata: Metadata = {
+    title: "Submitted — Formy",
+};
 
 export default async function SuccessPage({
   searchParams,

@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { auth } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
 import { SettingsForm } from "@/components/dashboard/SettingsForm";
+
+export const metadata: Metadata = {
+    title: "Settings — Formy",
+    robots: { index: false, follow: false },
+};
 
 export default async function SettingsPage({
   searchParams,

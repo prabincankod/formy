@@ -1,0 +1,16 @@
+{
+    "name": "Formy",
+    "short_name": "Formy",
+    "description": "Form submissions, simplified. One POST endpoint per form.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#fcf9f8",
+    "theme_color": "#fcf9f8",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "any",
+            "type": "image/png"
+        }
+    ]
+}

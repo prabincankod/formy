@@ -1,8 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import Header from "@/components/Header";
 import { CodeBlock } from "@/components/CodeBlock";
 import { _React, Html5, _Vue, AngularIcon, Curl } from "@dev.icons/react";
+
+export const metadata: Metadata = {
+    title: "Formy | Integrate once. Collect forever.",
+    description:
+        "One POST endpoint per form. Any JSON. No SDK, no field builder, no config. Collect form submissions from any stack — React, Vue, Angular, HTML, or curl.",
+    openGraph: {
+        title: "Formy | Integrate once. Collect forever.",
+        description:
+            "One POST endpoint per form. Any JSON. No SDK, no field builder, no config. Collect form submissions from any stack.",
+        url: "/",
+        images: [{ url: "/og-image.svg", width: 1200, height: 630 }],
+    },
+};
 
 export default function Home() {
   return (

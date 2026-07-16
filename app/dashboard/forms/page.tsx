@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { auth } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import { FormsList } from "@/components/dashboard/FormsList";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+    title: "Forms — Formy",
+    robots: { index: false, follow: false },
+};
 
 export default async function FormsPage() {
   const session = await auth();

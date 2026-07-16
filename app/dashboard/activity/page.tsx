@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { auth } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import { redirect } from "next/navigation";
 import { ActivityLog } from "@/components/dashboard/ActivityLog";
+
+export const metadata: Metadata = {
+    title: "Activity — Formy",
+    robots: { index: false, follow: false },
+};
 
 export default async function ActivityPage() {
   const session = await auth();

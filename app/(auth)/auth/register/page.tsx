@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { register } from "@/app/actions/auth";
+
+export const metadata: Metadata = {
+    title: "Create an account — Formy",
+};
 
 export default async function RegisterPage({
   searchParams,
