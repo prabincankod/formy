@@ -14,7 +14,7 @@ export const metadata: Metadata = {
         description:
             "One POST endpoint per form. Any JSON. No SDK, no field builder, no config. Collect form submissions from any stack.",
         url: "/",
-        images: [{ url: "/og-image.svg", width: 1200, height: 630 }],
+        images: [{ url: "/og-image.png", width: 1200, height: 630 }],
     },
 };
 
