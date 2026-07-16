@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { DashboardHome } from "@/components/dashboard/DashboardHome";
 
 export const metadata: Metadata = {
-    title: "Dashboard — Formy",
+    title: "Dashboard | Formy",
     robots: { index: false, follow: false },
 };
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "Submitted — Formy",
+    title: "Submitted | Formy",
 };
 
 export default async function SuccessPage({

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { ActivityLog } from "@/components/dashboard/ActivityLog";
 
 export const metadata: Metadata = {
-    title: "Activity — Formy",
+    title: "Activity | Formy",
     robots: { index: false, follow: false },
 };
 

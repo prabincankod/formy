@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { SettingsForm } from "@/components/dashboard/SettingsForm";
 
 export const metadata: Metadata = {
-    title: "Settings — Formy",
+    title: "Settings | Formy",
     robots: { index: false, follow: false },
 };
 

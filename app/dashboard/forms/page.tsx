@@ -5,7 +5,7 @@ import { FormsList } from "@/components/dashboard/FormsList";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-    title: "Forms — Formy",
+    title: "Forms | Formy",
     robots: { index: false, follow: false },
 };
 

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { login } from "@/app/actions/auth";
 
 export const metadata: Metadata = {
-    title: "Sign in — Formy",
+    title: "Sign in | Formy",
 };
 
 export default async function LoginPage({
