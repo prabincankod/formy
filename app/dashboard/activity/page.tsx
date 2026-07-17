@@ -45,6 +45,6 @@ export default async function ActivityPage() {
   }));
 
   return (
-    <ActivityLog items={activity} page={1} total={total} pageSize={pageSize} />
+    <ActivityLog items={activity} total={total} />
   );
 }

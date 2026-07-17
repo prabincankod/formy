@@ -7,8 +7,6 @@ import { AntdRegistry } from "@/components/AntdRegistry";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConfigProvider } from "antd";
-import { config } from "@/app/lib/config";
-
 const sora = Sora({
     variable: "--font-sora",
     subsets: ["latin"],
@@ -24,7 +22,7 @@ const description =
     "One POST endpoint per form. Any JSON. No SDK, no field builder, no config. Collect form submissions from any stack.";
 
 export const metadata: Metadata = {
-    metadataBase: new URL(config.baseUrl),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://formy.io"),
     title,
     description,
     icons: {

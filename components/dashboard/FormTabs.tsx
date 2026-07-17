@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
+import { useTransition, useMemo } from "react";
 import { Tabs, Form } from "antd";
 import { ArrowLeft, BarChart3, Eye, Code2, Edit3, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -63,7 +63,6 @@ export function FormTabs({
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [deletePending, setDeletePending] = useState(false);
   const [editForm] = Form.useForm();
 
   const [tab, setTab] = useQueryState(
@@ -98,10 +97,7 @@ export function FormTabs({
     startTransition(() => updateForm(id, fd));
   };
 
-  const handleDelete = () => {
-    setDeletePending(true);
-    startTransition(() => deleteForm(id));
-  };
+  const handleDelete = () => startTransition(() => deleteForm(id));
 
   const handleExport = (format: string) => {
     const a = document.createElement("a");
@@ -326,7 +322,6 @@ export function FormTabs({
                 id={id}
                 editForm={editForm}
                 pending={pending}
-                deletePending={deletePending}
                 initialTitle={title}
                 initialSlug={slug}
                 initialWebhookUrl={initialWebhookUrl ?? ""}

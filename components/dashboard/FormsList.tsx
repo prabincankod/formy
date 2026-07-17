@@ -5,7 +5,6 @@ import { Plus, FileText, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { CreateFormDialog } from "@/components/dashboard/CreateFormDialog";
 import { deleteForm } from "@/app/actions/forms";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -29,9 +28,8 @@ interface FormRow {
 
 export function FormsList({ data }: { data: FormRow[] }) {
     const [open, setOpen] = useState(false);
-    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [, startTransition] = useTransition();
-    const router = useRouter();
 
   return (
     <>
@@ -129,13 +127,13 @@ export function FormsList({ data }: { data: FormRow[] }) {
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             variant="destructive"
-                            disabled={deletingId === form.id}
+                            disabled={isDeleting}
                             onClick={() => {
-                              setDeletingId(form.id);
+                              setIsDeleting(true);
                               startTransition(() => deleteForm(form.id));
                             }}
                           >
-                            {deletingId === form.id ? "Deleting..." : "Delete"}
+                            {isDeleting ? "Deleting..." : "Delete"}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

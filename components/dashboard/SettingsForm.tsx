@@ -1,7 +1,7 @@
 "use client";
 
-import { useTransition, useState } from "react";
-import { Lock, AlertTriangle } from "lucide-react";
+import { useTransition } from "react";
+import { AlertTriangle } from "lucide-react";
 import { updatePassword, deleteAccount } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,8 +25,7 @@ export function SettingsForm({
     error?: string;
     success?: string;
 }) {
-    const [passwordPending, startPasswordTransition] = useTransition();
-    const [deletePending, startDeleteTransition] = useTransition();
+    const [pending, startTransition] = useTransition();
 
     return (
         <>
@@ -61,7 +60,7 @@ export function SettingsForm({
                     <h2 className="text-sm font-semibold text-on-surface">Change Password</h2>
                 </div>
                 <form
-                    action={(fd) => startPasswordTransition(() => updatePassword(fd))}
+                    action={(fd) => startTransition(() => updatePassword(fd))}
                     className="px-6 py-4 space-y-4"
                 >
                     <div className="space-y-2">
@@ -87,8 +86,8 @@ export function SettingsForm({
                             className="block w-full rounded-lg border border-border-muted bg-white px-4 py-2.5 text-sm text-on-surface outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                         />
                     </div>
-                    <Button type="submit" disabled={passwordPending}>
-                        {passwordPending ? "Updating..." : "Update Password"}
+                    <Button type="submit" disabled={pending}>
+                        {pending ? "Updating..." : "Update Password"}
                     </Button>
                 </form>
             </div>
@@ -116,10 +115,10 @@ export function SettingsForm({
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
                                     variant="destructive"
-                                    disabled={deletePending}
-                                    onClick={() => startDeleteTransition(() => deleteAccount())}
+                                    disabled={pending}
+                                    onClick={() => startTransition(() => deleteAccount())}
                                 >
-                                    {deletePending ? "Deleting..." : "Delete Forever"}
+                                    {pending ? "Deleting..." : "Delete Forever"}
                                 </AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>

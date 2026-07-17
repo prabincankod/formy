@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { config } from "@/app/lib/config";
 
-const submitUrl = config.submitUrl;
+const API = "https://formy.io/api/submit";
 
 const snippets = {
-  fetch: `fetch("${submitUrl}", {
+    fetch: `fetch("${API}", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -16,7 +15,7 @@ const snippets = {
     message: "Hello!",
   }),
 });`,
-  curl: `curl -X POST ${submitUrl} \\
+    curl: `curl -X POST ${API} \\
   -H "Content-Type: application/json" \\
   -d '{
     "slug": "contact",
@@ -24,7 +23,7 @@ const snippets = {
     "email": "jane@example.com",
     "message": "Hello!"
   }'`,
-  html: `<form action="${submitUrl}" method="POST">
+    html: `<form action="${API}" method="POST">
   <input type="hidden" name="slug" value="contact">
   <input type="text" name="name" placeholder="Name">
   <input type="email" name="email" placeholder="Email">
