@@ -28,9 +28,10 @@ interface FormRow {
 }
 
 export function FormsList({ data }: { data: FormRow[] }) {
-  const [open, setOpen] = useState(false);
-  const [, startTransition] = useTransition();
-  const router = useRouter();
+    const [open, setOpen] = useState(false);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [, startTransition] = useTransition();
+    const router = useRouter();
 
   return (
     <>
@@ -128,11 +129,13 @@ export function FormsList({ data }: { data: FormRow[] }) {
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             variant="destructive"
-                            onClick={() =>
-                              startTransition(() => deleteForm(form.id))
-                            }
+                            disabled={deletingId === form.id}
+                            onClick={() => {
+                              setDeletingId(form.id);
+                              startTransition(() => deleteForm(form.id));
+                            }}
                           >
-                            Delete
+                            {deletingId === form.id ? "Deleting..." : "Delete"}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

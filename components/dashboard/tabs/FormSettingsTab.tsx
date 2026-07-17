@@ -20,12 +20,14 @@ export function FormSettingsTab({
   id,
   editForm,
   pending,
+  deletePending = false,
   initialTitle,
   initialSlug,
   initialWebhookUrl,
   handleEdit,
   handleDelete,
 }: {
+  deletePending?: boolean;
   id: string;
   editForm: FormInstance;
   pending: boolean;
@@ -127,8 +129,8 @@ export function FormSettingsTab({
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction variant="destructive" onClick={handleDelete}>
-                  Delete
+                <AlertDialogAction variant="destructive" disabled={deletePending} onClick={handleDelete}>
+                  {deletePending ? "Deleting..." : "Delete"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
