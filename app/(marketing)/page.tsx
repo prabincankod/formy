@@ -4,6 +4,7 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import { CodeBlock } from "@/components/CodeBlock";
 import { _React, Html5, _Vue, AngularIcon, Curl } from "@dev.icons/react";
+import { ProductHuntBadge } from "@/components/ProductHuntBadge";
 
 export const metadata: Metadata = {
     title: "Formy | Integrate once. Collect forever.",
@@ -69,6 +70,10 @@ export default function Home() {
             <_Vue size={22} />
             <AngularIcon size={22} />
             <Curl size={22} />
+          </div>
+
+          <div className="flex justify-center mt-10">
+            <ProductHuntBadge />
           </div>
         </section>
 

@@ -79,18 +79,24 @@ export async function POST(request: NextRequest) {
     }).catch(() => {});
   }
 
-  await sendNotification({
-    to: form.createdBy.email,
-    logoUrl: `${origin}/logo.png`,
-    formTitle: form.title,
-    submissionId: sub.id,
-    data: rest as Record<string, unknown>,
-    submittedAt: sub.createdAt.toISOString(),
-  });
+  let emailSent = false;
+  try {
+    await sendNotification({
+      to: form.createdBy.email,
+      logoUrl: `${origin}/logo.png`,
+      formTitle: form.title,
+      submissionId: sub.id,
+      data: rest as Record<string, unknown>,
+      submittedAt: sub.createdAt.toISOString(),
+    });
+    emailSent = true;
+  } catch (e) {
+    console.error("Email notification failed:", e);
+  }
 
   if (contentType.includes("application/json")) {
     return NextResponse.json(
-      { success: true },
+      { success: true, emailSent },
       { status: 201, headers: corsHeaders },
     );
   }

@@ -1,8 +1,10 @@
+import { Resend } from "resend";
 import { render } from "@react-email/components";
 import { NotificationEmail } from "@/components/emails/NotificationEmail";
 
 const resendKey = process.env.RESEND_KEY ?? "";
 const resendFrom = process.env.RESEND_FROM ?? "";
+const resend = new Resend(resendKey);
 
 export async function sendNotification(opts: {
   to: string;
@@ -12,7 +14,7 @@ export async function sendNotification(opts: {
   data: Record<string, unknown>;
   submittedAt: string;
 }) {
-  const html = render(
+  const html = await render(
     NotificationEmail({
       logoUrl: opts.logoUrl,
       formTitle: opts.formTitle,
@@ -22,21 +24,14 @@ export async function sendNotification(opts: {
     }),
   );
 
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${resendKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: resendFrom,
-      to: opts.to,
-      subject: `New submission — ${opts.formTitle}`,
-      html,
-    }),
+  const { error } = await resend.emails.send({
+    from: resendFrom,
+    to: [opts.to],
+    subject: `New submission — ${opts.formTitle}`,
+    html,
   });
 
-  if (!res.ok) {
-    console.error("Failed to send email notification", await res.text());
+  if (error) {
+    throw new Error(`Resend error: ${error.message}`);
   }
 }

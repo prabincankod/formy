@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FileText, Send, Plus, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { CreateFormDialog } from "@/components/dashboard/CreateFormDialog";
+import { ProductHuntModal } from "@/components/ProductHuntModal";
 import { Button } from "@/components/ui/button";
 import { timeAgo } from "@/lib/utils";
 
@@ -87,6 +88,8 @@ export function DashboardHome({
       </div>
 
       <CreateFormDialog open={open} onClose={() => setOpen(false)} />
+
+      <ProductHuntModal />
 
       {hasForms && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
