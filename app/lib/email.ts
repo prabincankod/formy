@@ -27,7 +27,7 @@ export async function sendNotification(opts: {
   const { error } = await resend.emails.send({
     from: resendFrom,
     to: [opts.to],
-    subject: `New submission — ${opts.formTitle}`,
+    subject: `Received submission on: ${opts.formTitle}`,
     html,
   });
 
