@@ -3,7 +3,10 @@ import { register } from "@/app/actions/auth";
 import { SubmitButton } from "@/components/SubmitButton";
 
 export const metadata: Metadata = {
-    title: "Create an account | Formy",
+    title: "Create a Free Formy Account — Collect Form Submissions",
+    alternates: {
+        canonical: "/auth/register",
+    },
 };
 
 export default async function RegisterPage({

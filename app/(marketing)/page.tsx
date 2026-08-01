@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     title: "Formy | Integrate once. Collect forever.",
     description:
         "One POST endpoint per form. Any JSON. No SDK, no field builder, no config. Collect form submissions from any stack — React, Vue, Angular, HTML, or curl.",
+    alternates: {
+        canonical: "/",
+    },
     openGraph: {
         title: "Formy | Integrate once. Collect forever.",
         description:
@@ -79,6 +82,19 @@ export default function Home() {
 
         <section className="border-t border-border-muted bg-surface-container-low">
           <div className="max-w-5xl mx-auto px-4 md:px-8 py-20 md:py-24">
+            <div className="text-center mb-14">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-on-surface mb-4">
+                A form submission API, minus the backend
+              </h2>
+              <p className="text-sm text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
+                Formy is a form backend as a service built for developers who
+                just want a URL to POST to. No servers, no databases, no email
+                plumbing. Create a form, copy the endpoint, and start collecting
+                responses from any stack — React, Vue, Angular, plain HTML, or a
+                cron job.
+              </p>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               <div>
                 <h3 className="text-sm font-semibold text-on-surface mb-2">
@@ -86,7 +102,9 @@ export default function Home() {
                 </h3>
                 <p className="text-sm text-on-surface-variant leading-relaxed">
                   Create a form, get a URL. POST any JSON or form data. No field
-                  definitions, no schemas to write.
+                  definitions, no schemas to write, no SDK to install. Your
+                  form submission endpoint works the same from a Node server, a
+                  static site, or a shell script.
                 </p>
               </div>
               <div>
@@ -94,8 +112,9 @@ export default function Home() {
                   Real-time view
                 </h3>
                 <p className="text-sm text-on-surface-variant leading-relaxed">
-                  Submissions appear instantly in your dashboard. Search, view
-                  details, or export as CSV or JSON.
+                  Submissions appear instantly in your dashboard. Search them,
+                  open the details of a single response, or export everything as
+                  CSV or JSON with one click.
                 </p>
               </div>
               <div>
@@ -103,8 +122,65 @@ export default function Home() {
                   Webhooks &amp; email
                 </h3>
                 <p className="text-sm text-on-surface-variant leading-relaxed">
-                  Get notified on every submission. Forward data to your own
-                  webhook or receive an email. No servers to manage.
+                  Get notified on every submission. Forward the raw payload to
+                  your own webhook URL or receive a clean email summary. No
+                  servers to manage, nothing extra to configure.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-border-muted bg-background">
+          <div className="max-w-5xl mx-auto px-4 md:px-8 py-20 md:py-24">
+            <div className="text-center mb-14">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-on-surface mb-4">
+                How Formy works
+              </h2>
+              <p className="text-sm text-on-surface-variant max-w-xl mx-auto leading-relaxed">
+                Three steps from signup to your first submission. No config
+                files, no middleware, no serverless functions to deploy.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              <div className="text-center">
+                <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
+                  1
+                </div>
+                <h3 className="text-sm font-semibold text-on-surface mb-2">
+                  Create a form
+                </h3>
+                <p className="text-sm text-on-surface-variant leading-relaxed">
+                  Give it a title and a slug. That&apos;s the whole setup — no
+                  field builder, no drag-and-drop, no onboarding tour.
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
+                  2
+                </div>
+                <h3 className="text-sm font-semibold text-on-surface mb-2">
+                  POST to your endpoint
+                </h3>
+                <p className="text-sm text-on-surface-variant leading-relaxed">
+                  Send any JSON or form-encoded body to{" "}
+                  <code className="text-xs font-mono text-on-surface">
+                    /api/submit/your-slug
+                  </code>
+                  . Formy stores it and triggers your webhook and email.
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
+                  3
+                </div>
+                <h3 className="text-sm font-semibold text-on-surface mb-2">
+                  Read the responses
+                </h3>
+                <p className="text-sm text-on-surface-variant leading-relaxed">
+                  Review every submission in your dashboard, inspect individual
+                  responses, and export the data you need.
                 </p>
               </div>
             </div>

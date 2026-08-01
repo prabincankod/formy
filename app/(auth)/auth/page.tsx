@@ -3,7 +3,10 @@ import { login } from "@/app/actions/auth";
 import { SubmitButton } from "@/components/SubmitButton";
 
 export const metadata: Metadata = {
-    title: "Sign in | Formy",
+    title: "Sign in to Formy — Manage Your Form Submissions",
+    alternates: {
+        canonical: "/auth",
+    },
 };
 
 export default async function LoginPage({
