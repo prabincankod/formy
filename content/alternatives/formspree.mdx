@@ -1,0 +1,64 @@
+import { Callout } from "@/components/mdx/Callout";
+import { CodeSnippet } from "@/components/mdx/CodeSnippet";
+import { ComparisonTable } from "@/components/alternatives/ComparisonTable";
+
+export const metadata = {
+    title: "Formspree Alternative — Formy | The Thinner Form Backend",
+    description:
+        "Looking for a Formspree alternative? Formy is the form backend without the dashboard ceremony and the form builder: one POST endpoint, webhooks, JSON, and a free tier.",
+};
+
+export const h1 = "The Formspree alternative without the 50-submission cap";
+
+export const name = "Formspree";
+
+export const keyword = "formspree alternative";
+
+export const verdict =
+    "Formspree is the safe, well-known choice and works well. For a developer who writes their own HTML, Formy removes the parts you'd never use — the dashboard setup per form, the builder, the 50-submission free cap — and leaves the endpoint. Same idea, fewer layers.";
+
+Formspree is the biggest name in form backends and it's a good product — which is exactly why it's worth asking whether you need all of it. Formspree's endpoint sits behind a dashboard, a form builder, and a submission-count ceiling that caps free usage at 50 submissions a month. This page is for developers who want the endpoint without the ceremony: one URL per form, raw JSON, webhooks, and data you can export. Formy is that thinner alternative, and moving is a one-line change.
+
+<Callout title="The short answer">{verdict}</Callout>
+
+## Formy vs Formspree
+
+<ComparisonTable slugs={["formspree"]} />
+
+Feature comparisons reflect the public capabilities of each service as of 1 August 2026.
+
+## Where Formspree is more than a developer needs
+
+### An endpoint behind a dashboard
+
+Formspree hands you a form ID after you create the form in their dashboard. Formy hands you a slug on the URL — create a form, get the endpoint, no ceremony between you and the POST.
+
+### A bundled form builder you won't use
+
+Formspree's widget and builder are aimed at non-developers. If you own your markup, that's extra surface on your page you never asked for. Formy ships no builder at all.
+
+### Free tier caps at 50 submissions a month
+
+A landing page or waitlist in beta can cross 50 submissions quickly, and then you're on a paid plan. Formy's free tier is built for real projects getting real traffic.
+
+## Migrate from Formspree
+
+<CodeSnippet label="Before — Formspree" code='<form action="https://formspree.io/f/mxyz1234" method="POST">' />
+
+<CodeSnippet label="After — Formy" code='<form action="https://formy.io/api/submit/your-slug" method="POST">' />
+
+Create a form on Formy, copy your slug, and swap the action URL. Your existing form HTML and field names carry over unchanged.
+
+## Frequently asked questions
+
+### Is Formy a real Formspree alternative?
+
+Yes, for the endpoint use case. Both accept POST and notify you; Formy deliberately skips Formspree's dashboard-first flow and form builder, and its free tier is not capped at 50 submissions a month.
+
+### I use Formspree's JSON API. Will my code work?
+
+Your fetch call works the same — POST JSON to an endpoint, get a response. Only the URL changes, and Formy accepts JSON with any field names and no schema.
+
+### Does Formy have webhooks like Formspree?
+
+Yes. Every submission can be forwarded to a webhook URL as structured JSON in real time, in addition to email.

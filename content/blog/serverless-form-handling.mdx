@@ -1,55 +1,51 @@
 export const metadata = {
-    title: "Serverless Form Handling: When a POST Endpoint Replaces Your Backend",
+    title: "Serverless Form Handling: One POST Endpoint, No Backend",
     description:
-        "Every landing page needs a form, and nobody wants a database just to collect one. Here's how a single POST endpoint replaces your entire form backend.",
+        "Serverless form handling explained for developers: one POST endpoint replaces your backend. No server, no database, no SDK — email and webhooks included.",
     date: "2026-07-01",
-    readingTime: "6 min read",
-    tags: ["serverless", "forms"],
+    readingTime: "7 min read",
+    tags: ["serverless", "forms", "form-backend"],
 };
 
-# Serverless Form Handling: When a POST Endpoint Replaces Your Backend
+Serverless form handling means your form POSTs to a hosted endpoint instead of a backend you build and run. If you ship a landing page, a waitlist, a React or Vue app, or any static site with a contact form, this article is for you. You'll learn what a serverless form handler is, how one POST endpoint replaces a database and a mailer, and the exact moment you should keep building your own. The short version: for most projects, the fastest form backend is the one you don't write.
 
-Every project starts with the same innocent question: *"Where do the form submissions go?"*
+> **TL;DR — the 30-second summary**
+>
+> A serverless form handler is a hosted POST endpoint for your HTML form. You keep your markup, change the form's `action` URL, and the service stores the submission, emails you, and can forward a webhook. Setup takes about 30 seconds, there is no SDK and no field builder, and you can swap providers later without touching a single `<input>`. It is the wrong tool only when you need to query the data or build a product around it.
 
-You're building a landing page, a waitlist, a beta signup. The form is the easy part — HTML, a couple of inputs, a button. The **backend** is where the momentum dies.
+## On this page
 
-Suddenly you need a database, an API route, a mailer, rate limiting, and a way to view what came in. That's a lot of infrastructure for what is fundamentally *"store this JSON and tell me about it."*
+- [What is serverless form handling?](#what-is-serverless-form-handling)
+- [Why forms shouldn't require infrastructure](#why-forms-shouldnt-require-infrastructure)
+- [How it works: one POST endpoint](#how-it-works-one-post-endpoint)
+- [What you get: email and webhooks](#what-you-get-email-and-webhooks)
+- [When a form endpoint is the wrong call](#when-a-form-endpoint-is-the-wrong-call)
+- [A checklist for choosing a form backend](#a-checklist-for-choosing-a-form-backend)
+- [Frequently asked questions](#frequently-asked-questions)
 
-Serverless form handling exists to answer exactly that question.
+## What is serverless form handling?
 
-## The problem: forms shouldn't require infrastructure
+**Serverless form handling is a service that receives your form's HTTP POST request, stores the payload, and notifies you by email or webhook — with no server, database, or mail setup on your side.**
 
-A contact form is not a database application. It's a pipe: someone sends data, you receive it, and you read it later. Everything else — schema design, migrations, hosting — is friction standing between you and the signal.
+The term comes from the same wave as "serverless functions": you outsource the infrastructure so the code you run stays minimal. In this case you run zero code. The service owns a form submission API — the endpoint, the storage, and the notification plumbing — exposing one URL per form. Your only job is pointing the form at that URL — the same way [an HTML form's `action` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form) has always worked, just with a remote target instead of a page on your own server.
 
-The conventional approach looks like this:
+## Why forms shouldn't require infrastructure
 
-```js
-// Route handler you have to write, host, and maintain
-import { createClient } from "@vercel/postgres";
+A contact form is a pipe, not an application. Someone sends a few kilobytes of data, you want to read it later, and you want to know the moment it arrives. Everything beyond that — schema design, migrations, a hosted Postgres instance, a mail server, rate limiting, a dashboard — is friction standing between you and the signal.
 
-export async function POST(request) {
-  const body = await request.json();
-  const db = createClient();
-  await db.connect();
-  await db.sql`INSERT INTO submissions (data) VALUES (${JSON.stringify(body)})`;
-  await db.end();
-  return Response.json({ success: true });
-}
-```
+The conventional approach front-loads all of that friction before you have a single user:
 
-Then you need:
+- A database with a table for submissions
+- An API route that inserts the row
+- An email service and the credentials to use it
+- Somewhere to deploy and keep it running
+- A way to view and export the rows
 
-- A hosted Postgres instance
-- A way to view and export rows
-- Email or webhook notifications
-- Somewhere to deploy that route
-- Someone to keep it running
+For a feature that ships on every project you'll ever build, that is a lot of machinery. The serverless form handler collapses all five items into one URL.
 
-For a feature that ships on every single project you'll ever build.
+## How it works: one POST endpoint
 
-## The alternative: one POST endpoint per form
-
-A form backend as a service moves all of that behind a URL. You create a form, you get an endpoint, and you send data to it:
+A form backend as a service gives you one endpoint per form. You create a form, you get a slug, and you send data to it. The same endpoint accepts [JSON via `fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) or a plain HTML form POST:
 
 ```js
 const response = await fetch("https://formy.io/api/submit/waitlist", {
@@ -57,44 +53,80 @@ const response = await fetch("https://formy.io/api/submit/waitlist", {
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ email: "ada@example.com", source: "twitter" }),
 });
+// 201 -> { success: true, emailSent: true }
 ```
 
-That's it. No database, no route handler, no deployment. The service stores the submission, emails you, and fires your webhook if you have one.
+A native HTML form needs no JavaScript at all:
 
-The key insight is that **an endpoint is an interface, not an implementation**. Your frontend contract stays identical whether you host it yourself or send it elsewhere — which means you can start with Formy and swap it later without touching a single `<input>`.
-
-## What serverless form handling gives you
-
-**1. Zero backend to maintain**
-
-The fastest code you will ever write is the code you don't write. A form backend removes the highest-friction part of a side project: standing up infrastructure before you have users.
-
-**2. Any stack works**
-
-Since it's just a URL, your form backend is framework-agnostic. The same endpoint works from a React SPA, a Vue component, a plain HTML page, or a `curl` from your terminal:
-
-```bash
-curl -X POST https://formy.io/api/submit/waitlist \
-  -H "Content-Type: application/json" \
-  -d '{"email":"ada@example.com"}'
+```html
+<form action="https://formy.io/api/submit/waitlist" method="POST">
+  <input type="hidden" name="slug" value="waitlist" />
+  <input type="email" name="email" required />
+  <button type="submit">Join the waitlist</button>
+</form>
 ```
 
-**3. Notifications without plumbing**
+That's the whole integration. The service stores the submission, emails you, and fires your webhook if you configured one. A JSON request gets a `201` response; an HTML form POST gets a `303` redirect to a success page. Missing a slug returns `400`, and an unknown slug returns `404` — the same small contract on every form.
 
-Every submission can reach you immediately — email for quiet periods, webhooks when you want the data in your own systems in real time.
+## What you get: email and webhooks
 
-## When a POST endpoint is the wrong call
+Every form service can email you; that is table stakes. **Webhooks are what turn a submission into an event in your own pipeline.** Instead of the response disappearing into a dashboard you have to remember to check, it lands in a queue, a CRM, a Slack channel, or any system you already run:
 
-Be honest about the boundaries:
+```json
+{
+  "event": "submission.created",
+  "formId": "ckx0p9q4r2",
+  "formTitle": "Contact form",
+  "submissionId": "sub_01h2x8",
+  "data": { "email": "kim@example.com", "message": "..." },
+  "submittedAt": "2026-07-01T14:30:00.000Z"
+}
+```
 
-- **You need search, analytics, or complex queries** over the data → a real database is the right tool.
+So you get two notification channels in one: email for quiet periods, and a webhook when you want the data in your own systems in real time. Both fire from the same endpoint, and neither requires you to run a server to receive them.
+
+## When a form endpoint is the wrong call
+
+Be honest about the boundaries before you choose a form handler:
+
+- **You need search, analytics, or complex queries** over the submissions → a real database is the right tool.
 - **You're building a product around the data itself** → you should own the storage layer.
-- **You need a form field builder** → that's a different product; most form backends don't ship one.
+- **You need a visual field builder** → that's a different product; most form backends deliberately don't ship one.
 
-If you just need to *collect* responses and read them later, a form endpoint service is the smallest solution that works.
+If you just need to collect responses and read them later, a form endpoint service is the smallest solution that works. If you need to ask questions of the data, build your own storage.
 
-## The pragmatic play
+## A checklist for choosing a form backend
 
-For landing pages, waitlists, beta invites, and any "I need somewhere for this form to go" moment, serverless form handling removes the biggest cost: your time and attention during the part of a project where you have the least of both.
+When you compare options, run this checklist rather than reading marketing pages:
 
-If you want to try it without wiring up a database today, [create a form on Formy](/auth/register) and you'll have a live endpoint in about thirty seconds.
+- [ ] Plain POST endpoint, no SDK required for the basic flow
+- [ ] Accepts JSON and standard HTML form encoding
+- [ ] Email notification on every submission
+- [ ] Webhook support with a structured payload
+- [ ] A dashboard you can search and export to CSV or JSON
+- [ ] No field builder (you already have form markup)
+- [ ] Easy to migrate away from later
+
+## Frequently asked questions
+
+### Can I use serverless form handling with a React or Vue app?
+
+Yes. The endpoint is just a URL, so it works from any framework that can issue an HTTP request. Use `fetch` from your component, or point a plain HTML form's `action` at the endpoint — both work with the same form backend.
+
+### Does a form handler work without JavaScript?
+
+Yes. A native HTML form with the `action` attribute set to your endpoint and `method="POST"` submits without a single line of JavaScript. The browser handles the encoding and the redirect.
+
+### What happens to the data I collect?
+
+The service stores each submission in your account and you can export it as CSV or JSON at any time. You should pick a provider that keeps the data accessible and exportable, since that is what makes migration possible later.
+
+### Is a serverless form backend secure?
+
+The endpoint should be HTTPS-only and the service should never log request payloads. In practice the biggest risk is bots: prefer a provider that ships spam protection, because a public endpoint will get crawled.
+
+## The takeaway
+
+Serverless form handling removes the most expensive part of shipping a form: standing up and maintaining a backend before you have users. One POST endpoint replaces the database, the mailer, and the dashboard, and webhooks keep the data flowing into systems you already run. For landing pages, waitlists, beta invites, and static sites, it's the smallest solution that works.
+
+If you want to try it without wiring up a database today, [create a form on Formy](/auth/register) and you'll have a live endpoint in about thirty seconds. For the decision framework behind choosing a provider, read [what to look for in a form backend as a service](/blog/form-backend-as-a-service).

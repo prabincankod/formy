@@ -1,0 +1,64 @@
+import { Callout } from "@/components/mdx/Callout";
+import { CodeSnippet } from "@/components/mdx/CodeSnippet";
+import { ComparisonTable } from "@/components/alternatives/ComparisonTable";
+
+export const metadata = {
+    title: "FormBackend Alternative — Formy | Webhooks & A Submission Dashboard",
+    description:
+        "Looking for a FormBackend alternative? Formy adds what FormBackend lacks for developers: JSON webhooks, a searchable submission dashboard, and data you can export.",
+};
+
+export const h1 = "The FormBackend alternative with a dashboard";
+
+export const name = "FormBackend";
+
+export const keyword = "formbackend alternative";
+
+export const verdict =
+    "FormBackend is a reasonable email-forwarding service with good integrations. If you want your submissions as JSON in your own pipeline and a history you can search and export, Formy does both — with a free tier FormBackend doesn't offer.";
+
+FormBackend is a form-to-email service with integrations — it forwards submissions to an inbox, a Slack channel, or a tool you connect, and it's GDPR-minded. What it doesn't give a developer is a JSON webhook you can consume or a submission history you can search and export. This page is for developers evaluating a FormBackend alternative: you want the form data in your own systems as data, not routed to third parties. Formy is built for that — one POST endpoint, JSON webhooks, a dashboard — and switching is a one-line change.
+
+<Callout title="The short answer">{verdict}</Callout>
+
+## Formy vs FormBackend
+
+<ComparisonTable slugs={["formbackend"]} />
+
+Feature comparisons reflect the public capabilities of each service as of 1 August 2026.
+
+## Where FormBackend falls short for developers
+
+### No raw JSON webhook
+
+FormBackend routes submissions to email and partner integrations. You can't point a webhook at your own server and consume the payload as structured JSON. Formy forwards the full submission to any URL you control.
+
+### No submission dashboard
+
+There's no place to search, filter, or export your submissions. Your history lives in inboxes and integration feeds. Formy keeps every submission in a dashboard you can export to CSV or JSON.
+
+### No free tier
+
+FormBackend charges from the start. Formy has a free tier, so you can build on the endpoint before you pay for volume.
+
+## Migrate from FormBackend
+
+<CodeSnippet label="Before — FormBackend" code='<form action="https://formbackend.com/some-form-id" method="POST">' />
+
+<CodeSnippet label="After — Formy" code='<form action="https://formy.io/api/submit/your-slug" method="POST">' />
+
+Create a form on Formy, copy your slug, swap the action URL. Your fields stay the same — and you gain a dashboard and JSON webhooks immediately.
+
+## Frequently asked questions
+
+### What does Formy have that FormBackend doesn't?
+
+A JSON webhook to your own URL, a searchable submission dashboard with CSV/JSON export, and a free tier. FormBackend is email-and-integrations forwarding; Formy treats each submission as data.
+
+### I need GDPR-friendly form handling. Does Formy qualify?
+
+Formy stores submissions you can view, export, and delete — the same data handling expectations as the category. You keep full access to your data, which is the practical requirement.
+
+### Does migration take long?
+
+No. The action URL is the only change. Your HTML form and field names carry over, and your next submission lands in the Formy dashboard.

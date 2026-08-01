@@ -1,25 +1,32 @@
 export const metadata = {
-    title: "Best Form Backend for Developers Who Don't Want a Form Builder",
+    title: "Best Form Backend for Developers: 4 Tools Compared",
     description:
-        "A practical comparison of form backends for developers: what to evaluate, what to skip, and why the thinnest option is usually the best.",
+        "The best form backend for developers who write their own HTML: a 2026 comparison of Formy, FormBackend, FormKeep, and FormSubmit on endpoints, webhooks, and lock-in.",
     date: "2026-07-15",
-    readingTime: "8 min read",
+    readingTime: "7 min read",
     tags: ["form-backend", "comparison"],
 };
 
-# Best Form Backend for Developers Who Don't Want a Form Builder
+"Best form backend" is a dangerous query. It surfaces roundups written for people who want to drag fields around a canvas, embed a widget, and never see HTML again. That is not you — and this is the comparison for the developer who writes markup by hand, has a stack and a design system, and wants a URL to POST to rather than a tool imposing its UI. The short answer, up front: the best form backend for a developer is the thinnest one — a POST endpoint, no field builder, no SDK. This post compares Formy, FormBackend, FormKeep, and FormSubmit against the criteria that actually matter, and names the one we'd pick.
 
-"Best form backend" is a dangerous query. It surfaces roundups written for people who want to drag fields around a canvas, embed a widget, and never see HTML again.
+> **TL;DR — the verdict**
+>
+> For a developer who writes their own HTML, Formy wins on thinness: one POST endpoint per form, any JSON, no field builder, no SDK, with email and webhooks included. FormBackend and FormKeep are solid but have grown feature surface you may never use; FormSubmit is free but email-only, with no webhooks. Pick a form backend by endpoints and exportability, not by integration count.
 
-That is not you. You write the HTML yourself. You have a stack, a design system, and an opinion about how forms should feel. The last thing you want is another tool imposing its markup on your page.
+## On this page
 
-This is the guide for that person: a form backend comparison built around the things a developer actually cares about.
+- [What a developer wants from a form backend](#what-a-developer-wants-from-a-form-backend)
+- [The four tools compared](#the-four-tools-compared)
+- [The evaluation matrix](#the-evaluation-matrix)
+- [Why "thin" wins](#why-thin-wins)
+- [Frequently asked questions](#frequently-asked-questions)
+- [The verdict](#the-verdict)
 
 ## What a developer wants from a form backend
 
-Strip away the marketing and the category breaks down to four requirements:
+Strip away the marketing and a form data collection service breaks down to four requirements:
 
-**1. A URL you can POST to.** Not a widget, not an embed script — an endpoint. You want to keep your form markup exactly where it is and just change where the submission goes.
+**1. A URL you can POST to.** Not a widget, not an embed script — an endpoint. You keep your form markup exactly where it is and just change where the submission goes, the way [an HTML form's `action` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form) was designed to work.
 
 **2. JSON in, JSON out.** Your frontend is JavaScript. The backend should speak JSON without a config step or a field schema.
 
@@ -27,23 +34,23 @@ Strip away the marketing and the category breaks down to four requirements:
 
 **4. Notifications that fit your workflow.** Email for quiet projects, webhooks for anything connected to your own systems.
 
-## The candidate list
+## The four tools compared
 
 ### FormBackend
 
-Solid email forwarding, and they've invested heavily in content marketing around low-code tooling. The flip side: the "low code" positioning is aimed at a different buyer. Field configuration is part of their model, which means the setup process is heavier than a developer with a `form` tag needs.
+Solid email forwarding and a strong track record with agencies. The catch: the product has grown a wide feature surface over time — integrations, API options, and configuration paths that a developer shipping a single contact form doesn't need to learn. It's a fine choice if you value longevity, but "thinner" is not its selling point.
 
 ### FormKeep
 
-Clean, developer-friendly defaults and a long track record. FormKeep was ahead of the field for years, and it's a perfectly reasonable choice — but the product has grown in feature surface over time, and that growth is exactly what you may not want.
+Clean, developer-friendly defaults and a long history of good form handling. FormKeep was ahead of the field for years and remains a reasonable option. Like FormBackend, though, the feature surface has expanded, and that growth is exactly what you may not want for a pipe that should stay invisible.
 
 ### FormSubmit
 
-Zero-config email delivery is genuinely appealing for a one-off page. You'll outgrow it quickly, though: no webhooks on the free path and limited programmatic access means the ceiling is low for anything beyond a personal site.
+Zero-config email delivery is genuinely appealing for a one-off page, and the price is right — it's free. You'll outgrow it quickly, though: no webhooks on the free path and no submission dashboard or storage means the ceiling is low for anything beyond a personal site. If an email in your inbox is the whole requirement, it works; if you ever want to search or export, it doesn't.
 
 ### Formy
 
-The thinnest option on this list. A form is a title and a slug. You POST any JSON, submissions land in a dashboard, and webhook or email notifications fire immediately. There's deliberately no field builder — the form UI is yours to build, because it's the part you're already good at.
+The thinnest option on this list. A form is a title and a slug. You POST any JSON to `/api/submit/your-slug`, submissions land in a dashboard, and webhook or email notifications fire immediately — a JSON request gets a `201`, a missing slug a `400`, an unknown one a `404`. There's deliberately no field builder; the form UI is yours to build, because it's the part you're already good at. Data is always exportable as CSV or JSON, which is what keeps you free to leave.
 
 ## The evaluation matrix
 
@@ -68,8 +75,22 @@ Every feature a form service adds is a feature you have to understand, defend ag
 
 The best form backend for a developer is the one that does one thing — collect submissions — and then gets out of the way. That's a deliberate design choice, and it's the entire product philosophy behind Formy.
 
+## Frequently asked questions
+
+### What is the best free form backend for developers?
+
+For a developer who wants email notifications and nothing else, FormSubmit is the classic free option. If you also need a dashboard, webhooks, and export — which most projects eventually do — a service with a generous free tier and a plain POST endpoint is a better fit, because it doesn't force you to migrate later.
+
+### Do I need a form backend if I use Next.js or Vercel?
+
+Not necessarily. Next.js route handlers or Vercel serverless functions can receive form posts, but then you're writing, deploying, and maintaining that code yourself. A form backend as a service removes that work entirely and is the smaller solution for most landing pages and waitlists.
+
+### Can I migrate between form backends easily?
+
+Yes, if you chose one that accepts a plain POST endpoint and lets you export your data. Your frontend contract stays identical regardless of provider, so switching is a matter of changing the endpoint URL and exporting the old submissions as CSV or JSON.
+
 ## The verdict
 
-If you want the least infrastructure between your form and your inbox, with webhooks when you need them: [Formy](/auth/register) is built for this exact workflow. Create a form, POST to the endpoint, done.
+If you want the least infrastructure between your form and your inbox, with webhooks when you need them, [Formy](/auth/register) is built for this exact workflow: create a form, POST to the endpoint, done. If you need a widget to embed on a non-technical client's site, look at the builder-first tools instead. But if you write your own HTML, you don't need them — start with the thinnest option and add features only when a real need appears.
 
-If you need a widget to embed on a non-technical client's site, look at the builder-first tools instead. But if you write your own HTML, you don't need them.
+For the reasoning behind the checklist, read [what to look for in a form backend as a service](/blog/form-backend-as-a-service), or start from the architecture in [serverless form handling](/blog/serverless-form-handling).

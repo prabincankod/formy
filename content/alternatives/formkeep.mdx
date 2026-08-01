@@ -1,0 +1,64 @@
+import { Callout } from "@/components/mdx/Callout";
+import { CodeSnippet } from "@/components/mdx/CodeSnippet";
+import { ComparisonTable } from "@/components/alternatives/ComparisonTable";
+
+export const metadata = {
+    title: "FormKeep Alternative — Formy | Thinner, With a Free Tier",
+    description:
+        "Looking for a FormKeep alternative? Formy is the thinner form backend: same JSON POST and webhooks, no dashboard ceremony, no builder, and a free tier FormKeep's trial doesn't give you.",
+};
+
+export const h1 = "The FormKeep alternative with a free tier";
+
+export const name = "FormKeep";
+
+export const keyword = "formkeep alternative";
+
+export const verdict =
+    "FormKeep is solid and you won't regret it — but it's paid from the start and bigger than the job. Formy keeps what you actually use (JSON POST, webhooks, a dashboard) and drops the rest, with a free tier so you pay when the project earns it.";
+
+FormKeep has been a reliable form backend for years — JSON submissions, webhooks, a dashboard — and it works. But it's a mature, feature-grown product: setup runs through a dashboard with a form ID and a token, there's no real free tier (trial only), and the surface is more than most projects need. This page is for developers weighing a FormKeep alternative: you want JSON POST and webhooks without the ceremony or the monthly cost before you've got traffic. Formy is the thinner option, and moving takes one line.
+
+<Callout title="The short answer">{verdict}</Callout>
+
+## Formy vs FormKeep
+
+<ComparisonTable slugs={["formkeep"]} />
+
+Feature comparisons reflect the public capabilities of each service as of 1 August 2026.
+
+## Where FormKeep is more than you need
+
+### Paid from the first submission
+
+FormKeep is trial-only — no free tier for hobby projects or pre-revenue landing pages. Formy's free tier lets you ship the endpoint before you commit budget.
+
+### Dashboard-first setup with a form ID and token
+
+Every FormKeep form is created in the dashboard and addressed by an opaque ID and token. Formy gives you a human slug in the URL — create a form, copy the endpoint, done.
+
+### A feature surface you'll never touch
+
+Years of additions mean options, integrations, and settings to ignore. The best form backend is the one that gets out of the way; Formy ships with no builder and no config.
+
+## Migrate from FormKeep
+
+<CodeSnippet label="Before — FormKeep" code='<form action="https://formkeep.com/f/abc123token" method="POST">' />
+
+<CodeSnippet label="After — Formy" code='<form action="https://formy.io/api/submit/your-slug" method="POST">' />
+
+Create a form on Formy, copy your slug, swap the action URL. JSON POST and webhooks work the same, minus the token.
+
+## Frequently asked questions
+
+### Can Formy replace FormKeep's JSON submissions and webhooks?
+
+Yes. Formy accepts raw JSON POST with any field names and can forward every submission to a webhook URL as structured JSON — the same capabilities, without the form ID and token.
+
+### FormKeep has no free tier. Does Formy?
+
+Yes. Formy's free tier is enough to run real landing pages and waitlists before you need a paid plan.
+
+### What does switching cost me in effort?
+
+One line — the action URL. Your HTML, field names, and styles carry over unchanged.

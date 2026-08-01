@@ -15,6 +15,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/success`, lastModified: new Date(), priority: 0.2 },
         { url: `${baseUrl}/blog`, lastModified: new Date(), priority: 0.8 },
         {
+            url: `${baseUrl}/alternatives`,
+            lastModified: new Date(),
+            priority: 0.9,
+        },
+        {
+            url: `${baseUrl}/alternatives/formsubmit`,
+            lastModified: new Date(),
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/alternatives/formspree`,
+            lastModified: new Date(),
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/alternatives/formbackend`,
+            lastModified: new Date(),
+            priority: 0.7,
+        },
+        {
+            url: `${baseUrl}/alternatives/formkeep`,
+            lastModified: new Date(),
+            priority: 0.7,
+        },
+        {
             url: `${baseUrl}/blog/serverless-form-handling`,
             lastModified: new Date("2026-07-01"),
             priority: 0.7,

@@ -1,0 +1,74 @@
+import { Callout } from "@/components/mdx/Callout";
+
+export const metadata = {
+    title: "Cleaning Service Appointment Form — Take Bookings on Any Site",
+    description:
+        "A ready-to-use booking form for cleaning companies: service type, address, date. Collect bookings on your own website — no booking engine required.",
+};
+
+export const h1 = "Cleaning service appointment form";
+
+export const cta = {
+    title: "Put this form on your site today",
+    body: "Create a form, copy your endpoint, paste the HTML. Start collecting bookings in minutes.",
+    label: "Create your booking form",
+};
+
+This appointment form is built for cleaning companies — from solo cleaners to multi-crew operations — that want customers to book straight from their website. Five fields (name, phone, service, address, and preferred date) POST to a Formy endpoint, and a notification fires the moment a booking lands. Cleaning businesses lose leads when customers have to call, email, or fill out a long quote form; this keeps the request on your own site, in your dashboard, with no booking engine to configure.
+
+<Callout title="What you get with this form">
+one endpoint, one email per booking, a searchable dashboard, and CSV export. Setup takes about 30 seconds, and the form works on any static site or page builder.
+</Callout>
+
+## The form
+
+Five fields, one endpoint. Customers pick a service and a date; you get the request in your inbox and dashboard.
+
+```html
+<form action="https://formy.io/api/submit/cleaning-bookings" method="POST">
+  <input type="hidden" name="slug" value="cleaning-bookings">
+  <label>Your name
+    <input type="text" name="name" required>
+  </label>
+  <label>Phone
+    <input type="tel" name="phone" required>
+  </label>
+  <label>Service
+    <select name="service" required>
+      <option>Standard Clean</option>
+      <option>Deep Clean</option>
+      <option>Move-In / Move-Out</option>
+    </select>
+  </label>
+  <label>Address
+    <input type="text" name="address" required>
+  </label>
+  <label>Preferred date
+    <input type="date" name="date" required>
+  </label>
+  <button type="submit">Request booking</button>
+</form>
+```
+
+## What happens on submit
+
+1. The form POSTs the booking to `/api/submit/cleaning-bookings`
+2. Formy stores the request in your dashboard, exportable to CSV whenever you need the week&apos;s jobs
+3. You get an email notification — no more checking a shared inbox every hour
+4. Set a webhook to push bookings into your calendar or job management tool automatically
+
+## Frequently asked questions
+
+### Can customers book while I&apos;m out on a job?
+
+Yes. The endpoint accepts submissions 24/7 and notifies you instantly, so a lead that arrives while you&apos;re cleaning is waiting in your inbox when you finish, not lost to voicemail.
+
+### I don&apos;t want a booking engine. Does this replace one?
+
+For most cleaning companies, yes. This form collects the request; you confirm the booking by phone or text. If you later want a link-in-bio page where customers book without any logins, see the Kilino note below.
+
+### Can I get bookings into my job management software?
+
+Yes — set a webhook URL and every booking is forwarded to your scheduler, CRM, or job tool as JSON in real time.
+
+> **Prefer a full booking page instead of a form on your site?** If you&apos;re a cleaning company and you want customers to book straight from your Instagram bio, Facebook page, or Google Business profile, check out [Kilino](https://kilino.prasuco.com) — a link-in-bio booking page built specifically for cleaning companies. One tap to book, no logins, no quote forms. Formy is the right tool when you want bookings to land on _your own website_; Kilino is the right tool when you want them to land on a link you share everywhere.

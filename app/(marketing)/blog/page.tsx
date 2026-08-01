@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { contentMetadata } from "@/app/lib/seo";
+
 import ServerlessFormHandling, {
     metadata as p1,
 } from "@/content/blog/serverless-form-handling.mdx";
@@ -18,6 +20,13 @@ export const metadata: Metadata = {
     alternates: {
         canonical: "/blog",
     },
+    ...contentMetadata({
+        title: "Blog — Formy | Form Submission & Form Backend Guides",
+        description:
+            "Guides on serverless form handling, choosing a form backend as a service, webhooks, and collecting form submissions without building infrastructure.",
+        url: "/blog",
+        image: "/og/blog.png",
+    }),
 };
 
 const posts = [

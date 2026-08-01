@@ -1,0 +1,71 @@
+import { Callout } from "@/components/mdx/Callout";
+
+export const metadata = {
+    title: "Doctor Appointment Form — Collect Patient Bookings Without a Backend",
+    description:
+        "A ready-to-use appointment booking form for doctors and clinics. Patients pick a date and reason, you get notified by email or webhook — no booking software required.",
+};
+
+export const h1 = "Doctor appointment form";
+
+export const cta = {
+    title: "Set this up in 30 seconds",
+    body: "Create a form, copy your endpoint, paste the HTML. No backend, no config.",
+    label: "Create your appointment form",
+};
+
+This appointment request form is built for doctors, clinics, and independent practitioners who want patients to book from a website without buying a patient portal. Four fields — name, phone, preferred date, and reason for visit — POST straight to a Formy endpoint, and you get an email (or webhook) the moment a request arrives. No booking software, no database, no backend to maintain.
+
+<Callout title="What you get with this form">
+one endpoint, one email per request, a searchable dashboard, and CSV export. Setup takes about 30 seconds. The form runs on any static site — no server-side code anywhere.
+</Callout>
+
+## The form
+
+Paste this into any static site. Each submission is saved to Formy and a notification fires instantly.
+
+```html
+<form action="https://formy.io/api/submit/booking-requests" method="POST">
+  <input type="hidden" name="slug" value="booking-requests">
+  <label>Full name
+    <input type="text" name="fullName" required>
+  </label>
+  <label>Phone
+    <input type="tel" name="phone" required>
+  </label>
+  <label>Preferred date
+    <input type="date" name="preferredDate" required>
+  </label>
+  <label>Reason for visit
+    <select name="reason">
+      <option>Check-up</option>
+      <option>Follow-up</option>
+      <option>New symptom</option>
+    </select>
+  </label>
+  <button type="submit">Request appointment</button>
+</form>
+```
+
+## What happens on submit
+
+1. The form POSTs the fields (name, phone, date, reason) to `/api/submit/booking-requests`
+2. Formy stores the submission in your dashboard, reachable instantly and exportable to CSV
+3. You receive an email notification with the request details
+4. If you set a webhook URL, the full payload is forwarded to your own system (e.g. a scheduler or CRM) in real time
+
+> **Tip for clinics:** patients on mobile don&apos;t want to call or fill long forms. Keep it to these four fields, and put the form on your homepage and your [Google Business Profile](https://support.google.com/business/answer/9106524). Every request is one less phone call to return.
+
+## Frequently asked questions
+
+### Do I need a booking system to use this form?
+
+No. The form replaces the booking system for clinics that just want requests to arrive. Each submission lands in your dashboard and inbox; you confirm appointments by phone or email.
+
+### Can patients book outside office hours?
+
+Yes. The endpoint accepts submissions 24/7 and notifies you the moment one arrives, so a patient can request an appointment at 11 pm and you&apos;ll see it first thing.
+
+### Can I get the requests in my own scheduling tool?
+
+Yes — that&apos;s what the webhook is for. Set a webhook URL and every request is forwarded to your scheduler, CRM, or calendar as JSON in real time.

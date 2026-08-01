@@ -1,0 +1,64 @@
+import { Callout } from "@/components/mdx/Callout";
+import { CodeSnippet } from "@/components/mdx/CodeSnippet";
+import { ComparisonTable } from "@/components/alternatives/ComparisonTable";
+
+export const metadata = {
+    title: "FormSubmit Alternative — Formy | Webhooks, Dashboard & JSON POST",
+    description:
+        "Looking for a FormSubmit alternative? Formy gives you webhooks, a submission dashboard, and raw JSON POST — with the same zero-config start. Change your action URL, done.",
+};
+
+export const h1 = "The FormSubmit alternative that also does webhooks";
+
+export const name = "FormSubmit";
+
+export const keyword = "formsubmit alternative";
+
+export const verdict =
+    "If you only need email notifications and never want to touch a dashboard, FormSubmit is fine and free. The moment you need webhooks, a searchable submission history, or JSON POST, Formy does all three and starts the same way you started with FormSubmit — no config.";
+
+FormSubmit is the zero-config form-to-email service that many developers reach for first — and it still works if all you need is an email in your inbox. This page is for the developer who has outgrown it: you want webhooks, a submission history you can search and export, and JSON in and out. Formy is the alternative built for that — one POST endpoint per form, no field builder, no SDK — and the migration is a one-line change.
+
+<Callout title="The short answer">{verdict}</Callout>
+
+## Formy vs FormSubmit
+
+<ComparisonTable slugs={["formsubmit"]} />
+
+Feature comparisons reflect the public capabilities of each service as of 1 August 2026.
+
+## Where FormSubmit runs out for a developer
+
+### Email-only — there's no submission history
+
+FormSubmit forwards submissions to an inbox and stores nothing you can go back to. You can't search, filter, or export a request from last month; if the email is gone, the submission is gone.
+
+### No webhooks
+
+You can't push a submission into your own pipeline — a CRM, a queue, a Slack channel — without polling an inbox. Formy fires a structured JSON webhook on every submission.
+
+### Form-encoded only
+
+FormSubmit accepts form-encoded data and is built around your email address in the URL. If you POST JSON with your own field names, you're outside what it expects. Formy accepts any JSON, any field names.
+
+## Migrate from FormSubmit
+
+<CodeSnippet label="Before — FormSubmit" code='<form action="https://formsubmit.co/ajax/you@example.com" method="POST">' />
+
+<CodeSnippet label="After — Formy" code='<form action="https://formy.io/api/submit/your-slug" method="POST">' />
+
+That's the whole migration. Create the form on Formy, copy your slug, swap the action URL. Your existing HTML and fields stay untouched.
+
+## Frequently asked questions
+
+### Is Formy really a drop-in FormSubmit alternative?
+
+For the basic flow, yes — a plain HTML form POST. On top of that Formy adds what FormSubmit doesn't have: webhooks, a submission dashboard, CSV/JSON export, and raw JSON POST.
+
+### I'm on FormSubmit's free tier. What does switching cost?
+
+Formy also has a free tier, so you can move without paying anything. The endpoint is the only thing that changes in your form.
+
+### Can I keep my existing form HTML?
+
+Yes. Only the action URL changes. Your inputs, field names, and styling stay exactly as they are.

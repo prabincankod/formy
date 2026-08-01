@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Stethoscope, Sparkles } from "lucide-react";
+import { contentMetadata } from "@/app/lib/seo";
+import {
+    h1 as doctorH1,
+    metadata as doctorMeta,
+} from "@/content/use-cases/doctor-appointment-form.mdx";
+import {
+    h1 as cleaningH1,
+    metadata as cleaningMeta,
+} from "@/content/use-cases/cleaning-appointment-form.mdx";
 
 export const metadata: Metadata = {
     title: "Use Cases — Formy | Appointment & Booking Form Examples",
@@ -9,22 +18,27 @@ export const metadata: Metadata = {
     alternates: {
         canonical: "/use-cases",
     },
+    ...contentMetadata({
+        title: "Use Cases — Formy | Appointment & Booking Form Examples",
+        description:
+            "Real form backend examples: appointment booking forms for doctors and cleaning services. Copy the HTML, add your Formy endpoint, done.",
+        url: "/use-cases",
+        image: "/og/use-cases.png",
+    }),
 };
 
 const useCases = [
     {
         href: "/use-cases/doctor-appointment-form",
         icon: Stethoscope,
-        title: "Doctor appointment form",
-        description:
-            "Collect patient name, phone, preferred date and reason for visit. Post straight to your Formy endpoint and get notified on every booking request.",
+        title: doctorH1,
+        description: doctorMeta.description,
     },
     {
         href: "/use-cases/cleaning-appointment-form",
         icon: Sparkles,
-        title: "Cleaning service appointment form",
-        description:
-            "Take cleaning bookings — service type, address, date — without a booking engine. Perfect for cleaners who want a simple form on their site.",
+        title: cleaningH1,
+        description: cleaningMeta.description,
     },
 ];
 

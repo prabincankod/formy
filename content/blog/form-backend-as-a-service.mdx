@@ -1,25 +1,32 @@
 export const metadata = {
-    title: "What to Look for in a Form Backend as a Service (and Why Webhooks Change the Equation)",
+    title: "Form Backend as a Service: 5 Features That Matter",
     description:
-        "You've decided not to build your own form backend. Here's how to choose the right one, and why webhook support is the feature that actually matters.",
+        "A form backend as a service receives your form submissions so you don't build a server. Here are the 5 features that decide which provider to pick — webhooks first.",
     date: "2026-07-08",
-    readingTime: "7 min read",
+    readingTime: "6 min read",
     tags: ["form-backend", "webhooks"],
 };
 
-# What to Look for in a Form Backend as a Service (and Why Webhooks Change the Equation)
+There comes a moment in every project where you look at the code and realize: you are building a form backend. Not the product, not the feature — just infrastructure for receiving a few kilobytes of JSON. A form backend as a service exists to end that. You decide to buy instead of build, and then a new problem appears: the tools are not all the same, and the differentiators are rarely the ones the marketing pages advertise. This guide is written for developers comparing providers. It covers the five features that actually decide which one to pick, and why webhooks should be at the top of your list.
 
-There comes a moment in every project where you look at the code and realize: *you are building a form backend.* Not the product. Not the feature. Just infrastructure for receiving a few kilobytes of JSON.
+> **TL;DR — how to choose a form backend**
+>
+> Judge a form backend as a service on five things: a plain POST endpoint, webhooks, a searchable dashboard with CSV/JSON export, no field builder, and exportable data. Webhooks are the deciding feature — they turn each submission into an event in your own pipeline instead of an email you may miss. Setup takes about 2 minutes with any provider that does this well.
 
-The "form backend as a service" category exists to end that. But once you decide to buy instead of build, a new problem appears: the tools are not all the same, and the differentiators are rarely the ones the marketing pages advertise.
+## On this page
 
-Here's what actually matters when you evaluate one.
+- [1. The endpoint should be boring](#1-the-endpoint-should-be-boring)
+- [2. Webhooks: the feature that actually matters](#2-webhooks-the-feature-that-actually-matters)
+- [3. Viewing and exporting the data](#3-viewing-and-exporting-the-data)
+- [4. No field builder (read that twice)](#4-no-field-builder-read-that-twice)
+- [5. What the service does with your data](#5-what-the-service-does-with-your-data)
+- [The decision framework](#the-decision-framework)
+- [Frequently asked questions](#frequently-asked-questions)
+- [The bottom line](#the-bottom-line)
 
 ## 1. The endpoint should be boring
 
-The best form backend is the one you forget about. That starts with the interface: a plain POST endpoint that accepts standard JSON or form-encoded data.
-
-Be wary of anything that requires an SDK for the basic flow. If submitting a form means pulling in a client library, you haven't removed infrastructure — you've moved it into your bundle. You want the tool to interoperate with the platform you already ship on, which is exactly why the simplest possible contract wins:
+The best form backend is the one you forget about. That starts with the interface: a plain POST endpoint that accepts standard JSON or form-encoded data. Be wary of anything that requires an SDK for the basic flow — if submitting a form means pulling in a client library, you haven't removed infrastructure, you've moved it into your bundle.
 
 ```js
 fetch("https://formy.io/api/submit/beta-signups", {
@@ -29,45 +36,49 @@ fetch("https://formy.io/api/submit/beta-signups", {
 });
 ```
 
-No SDK, no schema, no field definitions. The payload is whatever your form collects.
+No SDK, no schema, no field definitions. The payload is whatever your form collects, and [HTTP POST is all the transport you need](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST). If a provider needs more ceremony than this for the basic flow, it's not removing work — it's relocating it.
 
 ## 2. Webhooks: the feature that actually matters
 
-Email notifications are table stakes — every form service can email you. **Webhooks are what separate a form collector from a form backend.**
+Email notifications are table stakes — every form service can email you. When developers ask for a form backend with webhooks, they mean the one feature that turns a collector into an extension of their own stack. **Webhooks are what separate a form collector from a form backend.** With a webhook, each submission becomes an event in your pipeline: it lands in a queue, a CRM, a Slack channel, or any system you already run, without you polling or manually exporting.
 
-With a webhook, each submission becomes an event in *your* pipeline. The response doesn't disappear into a dashboard you have to remember to check; it lands in a queue, a CRM, a Slack channel, or any system you already run:
+A good webhook payload is structured and predictable — form identifier, submitted fields, and a timestamp at minimum:
 
 ```json
 {
   "event": "submission.created",
-  "formId": "ckx...",
+  "formId": "ckx0p9q4r2",
   "formTitle": "Contact form",
   "data": { "email": "kim@example.com", "message": "..." },
   "submittedAt": "2026-07-08T14:30:00.000Z"
 }
 ```
 
-A service without webhooks forces you to poll or manually export. A service with them plugs straight into how you work today. When you compare options, put webhook support at the top of the checklist — not as a nice-to-have, but as the deciding feature.
+A service without webhooks forces you to poll or export by hand. A service with them plugs straight into how you work today. When you compare options, put webhook support at the top of the checklist — not as a nice-to-have, but as the deciding feature.
 
 ## 3. Viewing and exporting the data
 
-You'll need to read submissions at some point, so the dashboard matters:
+You will need to read submissions at some point, so the dashboard matters:
 
 - Can you see the latest submissions immediately, not after a sync?
 - Can you drill into a single response and see everything that came in?
 - Can you export to CSV or JSON when you need to move the data?
 
-These are the everyday actions. They should be fast, not hidden behind menus.
+These are the everyday actions. They should be fast, not hidden behind menus, because you will do them more often than any other task in the product.
 
 ## 4. No field builder (read that twice)
 
-The fastest form backends deliberately do **not** ship a drag-and-drop field builder. That's not a missing feature — it's the point.
-
-Field builders optimize for non-developers who never touch code. If you're building a landing page or an app, you already have a form UI. You don't need a second one hosted elsewhere. Adding a field builder means accepting vendor lock-in on your markup, which is the opposite of the portability you're buying.
+The fastest form backends deliberately do **not** ship a drag-and-drop field builder. That is not a missing feature — it's the point. Field builders optimize for non-developers who never touch code. If you're building a landing page or an app, you already have a form UI; you don't need a second one hosted elsewhere. Adding a field builder means accepting lock-in on your markup, which is the opposite of the portability you're buying. Your frontend is the part you're already good at — keep it.
 
 ## 5. What the service does with your data
 
-You're sending customer data somewhere, so the basics should be non-negotiable: HTTPS-only endpoints, no request logging of payloads, and a provider that keeps your submission data accessible and exportable. Anything you send should be easy to retrieve and easy to delete.
+You're sending customer data somewhere, so the basics should be non-negotiable:
+
+- HTTPS-only endpoints
+- No logging of request payloads
+- Data that stays accessible and exportable — easy to retrieve, easy to delete
+
+Anything you send should be easy to pull out later. That's what keeps you able to switch providers when your needs change, which is the escape hatch that makes any backend as a service safe to adopt in the first place.
 
 ## The decision framework
 
@@ -79,8 +90,22 @@ You're sending customer data somewhere, so the basics should be non-negotiable: 
 | Move data out | CSV/JSON export, easy data access |
 | Stay unopinionated | No field builder, bring your own HTML |
 
+## Frequently asked questions
+
+### What is a form backend as a service?
+
+A form backend as a service is a hosted service that receives your form's submissions over HTTP, stores them, and notifies you by email or webhook — so you don't run a server or database for the forms on your site. You point your form's `action` at the provider's endpoint and everything after submit is handled for you.
+
+### Do I need an SDK to use a form backend?
+
+No. The basic flow should work with a plain HTML form or a single `fetch` call. An SDK is optional sugar for advanced cases; if the provider requires one just to receive a submission, that's a sign the service is more opinionated than you want.
+
+### Why are webhooks important in a form backend?
+
+Webhooks deliver each submission to a URL you control in real time, so the data reaches your own systems (CRM, Slack, queues, databases) without polling or manual export. Without them, the submission is trapped in the provider's dashboard or an email inbox.
+
 ## The bottom line
 
-A form backend as a service should be a seam you barely notice. If the tool's documentation page is longer than the form you're trying to ship, it's the wrong tool.
+A form backend as a service should be a seam you barely notice. Judge it on the five features above, treat webhooks as the deciding one, and keep your frontend exactly where it is. If a tool's documentation is longer than the form you're trying to ship, it's the wrong tool.
 
-Formy is built around exactly this: [a POST endpoint per form](/auth/register), webhook and email notifications, and a dashboard you can export from. No field builder, no SDK, no config — just data in, notifications out.
+Formy is built around exactly this: [a POST endpoint per form](/auth/register), webhook and email notifications, and a dashboard you can export from. No field builder, no SDK, no config — just data in, notifications out. See how it compares in [the best form backends for developers](/blog/best-form-backend-for-developers), or read [why serverless form handling needs only one endpoint](/blog/serverless-form-handling).

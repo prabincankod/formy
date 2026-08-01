@@ -19,6 +19,12 @@ export default function Header() {
         </Link>
         <div className="flex items-center gap-6">
           <Link
+            href="/alternatives"
+            className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
+          >
+            Compare
+          </Link>
+          <Link
             href="/use-cases"
             className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
           >
